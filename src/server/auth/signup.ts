@@ -4,14 +4,15 @@ import * as v from "valibot";
 import { headers } from "next/headers";
 import { auth } from "@/auth";
 import { actionClient } from "@/server/safe-action";
+import { returnValidationErrors } from "next-safe-action";
+
+const signupSchema = v.object({
+  email: v.pipe(v.string("Email is required"), v.rfcEmail()),
+  password: v.pipe(v.string("Password is required"), v.minLength(6, "Password must be at least 6 characters long")),
+})
 
 export const signUp = actionClient
-  .inputSchema(
-    v.object({
-      email: v.pipe(v.string("Email is required"), v.rfcEmail()),
-      password: v.pipe(v.string("Password is required"), v.minLength(6, "Password must be at least 6 characters long")),
-    })
-  )
+  .inputSchema(signupSchema)
   .action(async ({ ctx, parsedInput }) => {
     console.log("Input:", parsedInput);
 
@@ -25,15 +26,11 @@ export const signUp = actionClient
       returnStatus: true,
     });
 
-    return session ? {
-      // ok: true,
-      status: 201,
-      message: "Sign up successful",
-      user: session.response.user
-    }: {
-      // ok: false,
-      status: 401,
-      message: "Invalid email or password",
-      user: null
+    if (!session.response.token) {
+      return returnValidationErrors(signupSchema, {
+        _errors: ["Signup fails, try again later"]
+      })
     }
+
+    return { user: session.response.user }
   });
