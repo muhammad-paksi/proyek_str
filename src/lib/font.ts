@@ -13,7 +13,10 @@ import {
   Roboto_Serif,
   Roboto_Slab,
   Shantell_Sans,
-  SUSE
+  SUSE,
+  Spectral,
+  Lora,
+  Noto_Serif
 } from "next/font/google";
 
 
@@ -58,6 +61,10 @@ export const google_sans_flex = Google_Sans_Flex({
   // adjustFontFallback: false,
 });
 
+export const lora = Lora({
+  subsets: ["latin", "math", "symbols"]
+})
+
 export const nunito = Nunito({
   subsets: ["latin"]
 });
@@ -73,6 +80,15 @@ export const suse = SUSE({
 export const noto_sans = Noto_Sans({
   subsets: ["latin"]
 });
+
+export const noto_serif = Noto_Serif({
+  subsets: ["latin"]
+})
+
+export const spectral = Spectral({
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  subsets: ["latin"]
+})
 
 /* ROBOTO FAMILY */
 export const roboto = Roboto({
