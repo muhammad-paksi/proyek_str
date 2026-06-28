@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { X } from "lucide-react";
+import { CalendarFold, LibraryBig, ListTodo, Users, X } from "lucide-react";
 import Tooltip from "@mui/material/Tooltip";
 import { Building2, Feather, LampWallUp, ScrollText } from "lucide-react";
 import { suse } from "@/lib/font";
@@ -34,7 +34,7 @@ export default function SideBar({
             {withBurger && (
               <Tooltip title="Open menu" placement="bottom-start" disableInteractive>
                 <button
-                  className="p-1 rounded-md hover:bg-gray-200/75 cursor-pointer"
+                  className="p-1 rounded-md hover:bg-gray-300/75 cursor-pointer"
                   onClick={() => setIsSidebarOpen?.(false)}
                 >
                   <X size={14} strokeWidth={2.5} />
@@ -50,32 +50,38 @@ export default function SideBar({
         <div className="flex-0 mt-0 pt-2 pb-2 border-0">
           {/* Nav element */}
           <nav
-            className="md:flex md:flex-col mt-0 px-2 border-0"
+            className="mt-0 md:flex md:flex-col gap-1 px-2 border-0"
             aria-label="Main navigation"
           >
             {/* Kanban boards */}
             <NavMenuWrapper>
               <Building2 className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
-                Hall
+                Dashboard
               </span>
             </NavMenuWrapper>
             <NavMenuWrapper>
-              <LampWallUp className="w-4" />
+              <CalendarFold className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
-                Trusted to me
+                Manage agenda
               </span>
             </NavMenuWrapper>
             <NavMenuWrapper>
-              <ScrollText className="w-4" />
+              <LibraryBig className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
-                Docs
+                My class
               </span>
             </NavMenuWrapper>
             <NavMenuWrapper>
-              <Feather className="w-4" />
+              <ListTodo className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
-                Channel
+                Verifikasi kelas
+              </span>
+            </NavMenuWrapper>
+            <NavMenuWrapper>
+              <Users className="w-4" />
+              <span className="text-sm font-normal group-hover:underline">
+                Manage users
               </span>
             </NavMenuWrapper>
           </nav>
