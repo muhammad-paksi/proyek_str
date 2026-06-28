@@ -3,11 +3,18 @@
 import { useState } from "react"
 import Link from "next/link";
 import { Drawer } from "antd"
-import Clock from 'react-live-clock';
+import dynamic from "next/dynamic";
 import { Hamburger, Menu, PanelLeftOpen } from "lucide-react";
 import Tooltip from "@mui/material/Tooltip";
 import SideBar from "@/components/sidebar";
 import { suse } from "@/lib/font";
+
+/**
+ * Load komponen Clock secara dinamis dan matikan SSR.
+ * Dilakukan untuk memuat komponen <Clock> secara dinamis (dynamic import) dan menonaktifkan SSR khusus untuk komponen tersebut,
+ * agar tidak muncul error Hydration Mismatch.
+ */
+const Clock = dynamic(() => import('react-live-clock'), { ssr: false });
 
 export default function Header(){
 
@@ -38,7 +45,10 @@ export default function Header(){
 
         {/* RIGHT NAV */}
         <div className="w-fit h-full flex items-center">
-          <Clock format={'HH:mm:ss'} ticking={true} timezone={'Asia/Jakarta'} className={`text-xl font-medium ${suse.className}`} />
+          <div className="w-fit h-full">
+            <Clock format={"dddd, Do MMMM yyyy"} timezone={'Asia/Jakarta'} locale="id-ID" ticking={true} className={`me-5 text-base font-normal ${suse.className}`} />
+            <Clock format={"hh.mm"} timezone={'Asia/Jakarta'} locale="id-ID" ticking={true} className={`text-xl font-medium ${suse.className}`} />
+          </div>
         </div>
       </header>
 

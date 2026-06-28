@@ -54,31 +54,31 @@ export default function SideBar({
             aria-label="Main navigation"
           >
             {/* Kanban boards */}
-            <NavMenuWrapper>
+            <NavMenuWrapper href="/dasbor">
               <Building2 className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
                 Dashboard
               </span>
             </NavMenuWrapper>
-            <NavMenuWrapper>
+            <NavMenuWrapper href="/manage_agenda">
               <CalendarFold className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
                 Manage agenda
               </span>
             </NavMenuWrapper>
-            <NavMenuWrapper>
+            <NavMenuWrapper href="/my_class">
               <LibraryBig className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
-                My class
+                Kelas saya
               </span>
             </NavMenuWrapper>
-            <NavMenuWrapper>
+            <NavMenuWrapper href="/verifikasi_kelas">
               <ListTodo className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
                 Verifikasi kelas
               </span>
             </NavMenuWrapper>
-            <NavMenuWrapper>
+            <NavMenuWrapper href="/manage_users">
               <Users className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
                 Manage users
