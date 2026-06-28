@@ -1,0 +1,106 @@
+"use client";
+
+import Link from "next/link";
+import { X } from "lucide-react";
+import Tooltip from "@mui/material/Tooltip";
+import { Building2, Feather, LampWallUp, ScrollText } from "lucide-react";
+import { suse } from "@/lib/font";
+import BaseUIScrollWrapper from "@/components/wrapper/baseui_scroll_wrapper";
+import NavMenuWrapper from "@/components/wrapper/nav_menu_wrapper";
+
+/** A component that appears on the side of page. */
+export default function SideBar({
+  withBurger = false,
+  isSidebarOpen,
+  setIsSidebarOpen,
+}: {
+  withBurger?: boolean;
+  isSidebarOpen?: boolean;
+  setIsSidebarOpen?: (open: boolean) => void;
+}) {
+
+  return (
+    <>
+      <div className={`flex flex-col w-full h-full ${suse.className}`}>
+        <div className="h-[7vh] flex flex-col">
+          <div className={`h-full flex items-center justify-between ps-4 pe-3`}>
+            <Link
+              href="/"
+              prefetch={false}
+              className="h-[50%] flex justify-start items-center ps-2 pe-4"
+            >
+              <img src="/Jti_polinema.svg" alt="Logo" className="h-full w-auto" />
+            </Link>
+            {withBurger && (
+              <Tooltip title="Open menu" placement="bottom-start" disableInteractive>
+                <button
+                  className="p-1 rounded-md hover:bg-gray-200/75 cursor-pointer"
+                  onClick={() => setIsSidebarOpen?.(false)}
+                >
+                  <X size={14} strokeWidth={2.5} />
+                </button>
+              </Tooltip>
+            )}
+          </div>
+
+          {/* mt-auto mendorong elemen hr ini ke dasar kontainer */}
+          <hr className="mt-auto ml-2 mr-3 border-gray-300" />
+        </div>
+
+        <div className="flex-0 mt-0 pt-2 pb-2 border-0">
+          {/* Nav element */}
+          <nav
+            className="md:flex md:flex-col mt-0 px-2 border-0"
+            aria-label="Main navigation"
+          >
+            {/* Kanban boards */}
+            <NavMenuWrapper>
+              <Building2 className="w-4" />
+              <span className="text-sm font-normal group-hover:underline">
+                Hall
+              </span>
+            </NavMenuWrapper>
+            <NavMenuWrapper>
+              <LampWallUp className="w-4" />
+              <span className="text-sm font-normal group-hover:underline">
+                Trusted to me
+              </span>
+            </NavMenuWrapper>
+            <NavMenuWrapper>
+              <ScrollText className="w-4" />
+              <span className="text-sm font-normal group-hover:underline">
+                Docs
+              </span>
+            </NavMenuWrapper>
+            <NavMenuWrapper>
+              <Feather className="w-4" />
+              <span className="text-sm font-normal group-hover:underline">
+                Channel
+              </span>
+            </NavMenuWrapper>
+          </nav>
+        </div>
+
+        {/* Footer element */}
+        <footer className="mt-auto shrink-0 pr-1.25 pb-2 border-t-0 border-t-gray-300">
+          <hr className="mx-2 mb-3 border-gray-300" />
+          {/* <div className="flex justify-start items-center py-1 px-2 text-xl font-semibold">
+            Logo
+          </div> */}
+          {/* <Link href={"/dasbor"} className="ml-5 mb-2 inline-block w-fit h-6">
+            <img src="/Jti_polinema.svg" alt="Logo" className="h-full w-auto" />
+          </Link> */}
+          <div className="ml-3.25 mb-1 w-fit px-0.5 text-gray-500 text-sm font-semibold">
+            Tentang kami
+          </div>
+          <div className="ml-3.25 w-fit px-0.5 text-gray-500 text-sm font-semibold">
+            Syarat dan Ketentuan
+          </div>
+          <div className="ml-3.25 mt-1 w-fit px-0.5 text-[#C19A6B] text-sm font-semibold">
+            © 2026 SI Diseminasi
+          </div>
+        </footer>
+      </div>
+    </>
+  );
+}
