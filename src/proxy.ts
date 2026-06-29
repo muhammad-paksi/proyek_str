@@ -7,7 +7,7 @@ export async function proxy(request: NextRequest) {
   // Jika path TEPAT HANYA '/dasbor' atau '/dasbor/'
   if (pathname === '/dasbor' || pathname === '/dasbor/') {
     // Redirect ke /dasbor/bla
-    return NextResponse.redirect(new URL('/dasbor/bla', request.url));
+    return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
   }
 
   // Jika ada ekornya (misal: /dasbor/profile), biarkan lewat

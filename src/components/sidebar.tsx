@@ -96,12 +96,12 @@ export default function SideBar({
           {/* <Link href={"/dasbor"} className="ml-5 mb-2 inline-block w-fit h-6">
             <img src="/Jti_polinema.svg" alt="Logo" className="h-full w-auto" />
           </Link> */}
-          <div className="ml-3.25 mb-1 w-fit px-0.5 text-gray-500 text-sm font-semibold">
+          <Link href={"https://jti.polinema.ac.id/sejarah/"} className="block ml-3.25 mb-1 w-fit px-0.5 drawerlink-gray-500 text-sm font-semibold">
             Tentang kami
-          </div>
-          <div className="ml-3.25 w-fit px-0.5 text-gray-500 text-sm font-semibold">
+          </Link>
+          <Link href={"https://jti.polinema.ac.id/tata-tertib/"} className="block ml-3.25 w-fit px-0.5 drawerlink-gray-500 text-sm font-semibold">
             Syarat dan Ketentuan
-          </div>
+          </Link>
           <div className="ml-3.25 mt-1 w-fit px-0.5 text-[#C19A6B] text-sm font-semibold">
             © 2026 SI Diseminasi
           </div>

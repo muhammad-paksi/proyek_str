@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@atlaskit/dropdown-menu": "^17.1.0",
+    "@atlaskit/tokens": "^15.1.0",
     "@base-ui/react": "^1.6.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
@@ -53,6 +55,7 @@
     "unrs-resolver"
   ],
   "trustedDependencies": [
+    "esbuild",
     "sharp",
     "unrs-resolver"
   ]

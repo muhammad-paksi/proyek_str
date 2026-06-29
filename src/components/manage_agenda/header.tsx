@@ -28,7 +28,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-screen h-[7vh] flex items-center justify-between py-2 pl-7 pr-12 border-b border-b-gray-300 bg-white">
+      <header className="w-screen h-[7vh] flex items-center justify-between py-2 pl-7 pr-12 border-b-0 border-b-gray-300 bg-white">
         {/* LEFT NAV */}
         <div className="h-full w-fit flex items-center">
           <Tooltip
@@ -47,41 +47,6 @@ export default function Header() {
           <Link href={"/dasbor"} className="w-fit h-full">
             <img src="/Jti_polinema.svg" alt="Logo" className="h-[95%] w-auto" />
           </Link>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: "lantai_6",
-                  label: "Lantai 6",
-                  onClick: () => router.push("/dasbor/lantai_6"),
-                },
-                {
-                  key: "lantai_7",
-                  label: "Lantai 7",
-                  onClick: () => router.push("/dasbor/lantai_7"),
-                },
-                {
-                  key: "lantai_8",
-                  label: "Lantai 8",
-                  onClick: () => router.push("/dasbor/lantai_8"),
-                },
-              ],
-              selectable: true,
-              defaultSelectedKeys: [floor || "lantai_6"],
-            }}
-            trigger={['click']}
-          >
-            <button className={`ml-7 flex gap-1 items-center pl-2 pr-1.25 py-1 rounded-md border border-gray-300 bg-white hover:border-blue-500 cursor-pointer text-xs ${suse.className}`}>
-              {/* <Space> */}
-                {/* Tombol menampilkan teks dinamis mengikuti path URL saat ini */}
-                {floor === "lantai_6" ? "Lantai 6" :
-                 floor === "lantai_7" ? "Lantai 7" :
-                 floor === "lantai_8" ? "Lantai 8" : 
-                 "Pilih Lantai"}
-                <ChevronDown size={14} strokeWidth={2} className="text-gray-500" />
-              {/* </Space> */}
-            </button>
-          </Dropdown>
         </div>
 
         {/* RIGHT NAV */}
