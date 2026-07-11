@@ -16,7 +16,8 @@ import {
   SUSE,
   Spectral,
   Lora,
-  Noto_Serif
+  Noto_Serif,
+  Mona_Sans
 } from "next/font/google";
 
 
@@ -63,6 +64,10 @@ export const google_sans_flex = Google_Sans_Flex({
 
 export const lora = Lora({
   subsets: ["latin", "math", "symbols"]
+})
+
+export const mona_sans = Mona_Sans({
+  
 })
 
 export const nunito = Nunito({

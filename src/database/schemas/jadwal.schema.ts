@@ -1,3 +1,28 @@
+
+export const user = pgTable(
+  "user",
+  {
+    idUser: bigserial("id", { mode: "number" }).notNull(),
+    nama: varchar({ length: 100 }).notNull(),
+    username: varchar({ length: 75 }).notNull(),
+    password: varchar({ length: 75 }).notNull(),
+    role: varchar({ length: 20 }).notNull(), // Isinya: 'admin' atau 'mahasiswa'
+    
+    // Kolom relasi dibuat NULLABLE (tanpa .notNull())
+    kodeKelas: varchar("kode_kelas", { length: 8 }).references(
+      () => kelas.kodeKelas,
+      {
+        onDelete: "set null", // Jika kelas dihapus, user tidak ikut terhapus
+        onUpdate: "cascade",
+      }
+    ),
+  },
+  (table) => [
+    primaryKey({ columns: [table.idUser], name: "user_id_user" }),
+    unique("user_username_unique").on(table.username),
+  ],
+);
+
 import {
   pgTable,
   AnyPgColumn,
@@ -15,7 +40,7 @@ import { sql } from "drizzle-orm";
 export const agenda = pgTable(
   "agenda",
   {
-    idAgenda: bigserial("id_agenda", { mode: "number" }).notNull(),
+    idAgenda: bigserial("id", { mode: "number" }).notNull(),
     nama: varchar({ length: 100 }).notNull(),
     deskripsi: varchar({ length: 500 }),
     waktuMulai: timestamp("waktu_mulai", { mode: "string" }).notNull(),
