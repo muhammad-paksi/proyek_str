@@ -1,3 +1,21 @@
+import {
+  pgTable,
+  AnyPgColumn,
+  primaryKey,
+  bigserial,
+  date,
+  index,
+  numeric,
+  varchar,
+  timestamp,
+  smallint,
+  foreignKey,
+  unique,
+  time,
+  text,
+  boolean,
+} from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const user = pgTable(
   "user",
@@ -6,8 +24,11 @@ export const user = pgTable(
     nama: varchar({ length: 100 }).notNull(),
     username: varchar({ length: 75 }).notNull(),
     password: varchar({ length: 75 }).notNull(),
-    role: varchar({ length: 20 }).notNull(), // Isinya: 'admin' atau 'mahasiswa'
-    
+    role: numeric(
+      "role", 
+      { mode: "number" }
+    ).default(0),
+    status: boolean("status").default(true),
     // Kolom relasi dibuat NULLABLE (tanpa .notNull())
     kodeKelas: varchar("kode_kelas", { length: 8 }).references(
       () => kelas.kodeKelas,
@@ -16,37 +37,111 @@ export const user = pgTable(
         onUpdate: "cascade",
       }
     ),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+    updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdateFn(() => sql`now()`),
   },
   (table) => [
     primaryKey({ columns: [table.idUser], name: "user_id_user" }),
     unique("user_username_unique").on(table.username),
   ],
 );
+export const perwakilan = pgTable("perwakilan",{
+  id: bigserial("id", { mode: "number" }).notNull(),
+  idUser: varchar("id_user", { length: 50 }).notNull(),
+  kelas: varchar("kode_kelas", { length: 8 })
+    .notNull()
+    .references(() => kelas.kodeKelas, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+  updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdateFn(() => sql`now()`),
+}, (table) => [
+  primaryKey({ columns: [table.id], name: "perwakilan_id" }),
+])
 
-import {
-  pgTable,
-  AnyPgColumn,
-  primaryKey,
-  bigserial,
-  varchar,
-  timestamp,
-  smallint,
-  foreignKey,
-  unique,
-  time,
-} from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+
 
 export const agenda = pgTable(
   "agenda",
   {
     idAgenda: bigserial("id", { mode: "number" }).notNull(),
-    nama: varchar({ length: 100 }).notNull(),
+    nama: varchar({ length: 100 }),
+    imageURL: text("image_url"),
     deskripsi: varchar({ length: 500 }),
-    waktuMulai: timestamp("waktu_mulai", { mode: "string" }).notNull(),
+    waktu: date("waktu", { mode: "date" }).notNull(),
   },
   (table) => [
     primaryKey({ columns: [table.idAgenda], name: "agenda_id_agenda" }),
+  ],
+);
+
+export const jadwal = pgTable(
+  "jadwal",
+  {
+    idJadwal: bigserial("id", { mode: "number" }).notNull(),
+    kodeKelas: varchar("kode_kelas", { length: 8 })
+      .notNull()
+      .references(() => kelas.kodeKelas, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    kodeRuang: varchar("kode_ruang", { length: 8 }).references(
+      () => ruang.kodeRuang,
+      { onDelete: "set null", onUpdate: "cascade" },
+    ),
+    kodeMk: varchar("kode_mk", { length: 20 })
+      .notNull()
+      .references(() => mataKuliah.kodeMk, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    kodeDosen: varchar("kode_dosen", { length: 8 }).references(
+      () => dosen.kodeDosen,
+      { onDelete: "set null", onUpdate: "cascade" },
+    ),
+    kodeHari: smallint("kode_hari").references(() => hari.kodeHari, {
+      onDelete: "set null",
+      onUpdate: "cascade",
+    }),
+    kodeJp: varchar("kode_jp", {length: 8}).references(() => jamPelajaran.kodeJp, {
+      onDelete: "set null",
+      onUpdate: "cascade",
+    }),
+    // jpMulai: varchar("jp_mulai", {length:8}).references(() => jamPelajaran.kodeJp, {
+    //   onDelete: "set null",
+    //   onUpdate: "cascade",
+    // }),
+    // jpSelesai: varchar("jp_selesai", {length:8}).references(() => jamPelajaran.kodeJp, {
+    //   onDelete: "set null",
+    //   onUpdate: "cascade",
+    // }),
+    keterangan: varchar({ length: 250 }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.idJadwal], name: "jadwal_id_jadwal" }),
+    index("idx_hari").on(table.kodeHari),
+    index("idx_hari_kelas").on(table.kodeKelas, table.kodeHari),
+  ],
+);
+
+export const pelaksanaan = pgTable(
+  "pelaksanaan",
+  {
+    id: bigserial("id", { mode: "number" }).notNull(),
+    kodeJadwal: bigserial("kode_jadwal", { mode: "number" })
+      .notNull()
+      .references(() => jadwal.idJadwal, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    date: date("date", { mode: "date" }).notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+    updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdateFn(() => sql`now()`),
+  },
+  (table) => [
+    primaryKey({ columns: [table.id], name: "pelaksanaan_id" }),
+    index("idx_tanggal_jadwal").on(table.date, table.kodeJadwal),
   ],
 );
 
@@ -72,53 +167,10 @@ export const hari = pgTable(
   ],
 );
 
-export const jadwal = pgTable(
-  "jadwal",
-  {
-    idJadwal: bigserial("id_jadwal", { mode: "number" }).notNull(),
-    kodeKelas: varchar("kode_kelas", { length: 8 })
-      .notNull()
-      .references(() => kelas.kodeKelas, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      }),
-    kodeRuang: varchar("kode_ruang", { length: 8 }).references(
-      () => ruang.kodeRuang,
-      { onDelete: "set null", onUpdate: "cascade" },
-    ),
-    kodeMk: varchar("kode_mk", { length: 20 })
-      .notNull()
-      .references(() => mataKuliah.kodeMk, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      }),
-    kodeDosen: varchar("kode_dosen", { length: 8 }).references(
-      () => dosen.kodeDosen,
-      { onDelete: "set null", onUpdate: "cascade" },
-    ),
-    kodeHari: smallint("kode_hari").references(() => hari.kodeHari, {
-      onDelete: "set null",
-      onUpdate: "cascade",
-    }),
-    jpMulai: smallint("jp_mulai").references(() => jamPelajaran.kodeJp, {
-      onDelete: "set null",
-      onUpdate: "cascade",
-    }),
-    jpSelesai: smallint("jp_selesai").references(() => jamPelajaran.kodeJp, {
-      onDelete: "set null",
-      onUpdate: "cascade",
-    }),
-    keterangan: varchar({ length: 250 }),
-  },
-  (table) => [
-    primaryKey({ columns: [table.idJadwal], name: "jadwal_id_jadwal" }),
-  ],
-);
-
 export const jamPelajaran = pgTable(
   "jam_pelajaran",
   {
-    kodeJp: smallint("kode_jp").notNull(),
+    kodeJp: varchar("kode_jp", {length: 8}).notNull(),
     jamMulai: time("jam_mulai").notNull(),
     jamSelesai: time("jam_selesai").notNull(),
   },

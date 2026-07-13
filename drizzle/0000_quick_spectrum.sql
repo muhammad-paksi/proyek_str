@@ -25,14 +25,14 @@ CREATE TABLE "jadwal" (
 	"kode_mk" varchar(20) NOT NULL,
 	"kode_dosen" varchar(8),
 	"kode_hari" smallint,
-	"jp_mulai" smallint,
-	"jp_selesai" smallint,
+	"jp_mulai" varchar(8),
+	"jp_selesai" varchar(8),
 	"keterangan" varchar(250),
 	CONSTRAINT "jadwal_id_jadwal" PRIMARY KEY("id_jadwal")
 );
 --> statement-breakpoint
 CREATE TABLE "jam_pelajaran" (
-	"kode_jp" smallint NOT NULL,
+	"kode_jp" varchar(8) NOT NULL,
 	"jam_mulai" time NOT NULL,
 	"jam_selesai" time NOT NULL,
 	CONSTRAINT "jam_pelajaran_kode_jp" PRIMARY KEY("kode_jp"),
