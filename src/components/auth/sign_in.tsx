@@ -45,9 +45,7 @@ export default function SignIn() {
 
   return (
     <>
-      <h2
-        className={`mb-1 border-0 text-lg font-semibold text-neutral-700 ${suse.className}`}
-      >
+      <h2 className={`mb-1 border-0 text-lg font-semibold text-neutral-700 ${suse.className}`}>
         Selamat datang!
       </h2>
       <Form

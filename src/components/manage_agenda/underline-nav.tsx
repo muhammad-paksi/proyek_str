@@ -29,7 +29,7 @@ export default function UnderlineNavigation(){
               leadingVisual={item.icon || ""}
               // Jika cocok, berikan nilai "page", jika tidak, berikan undefined
               aria-current={isCurrent ? "page" : undefined}
-              className={`font-medium ${mona_sans.className}`}
+              className={`${mona_sans.className}`}
             >
               <Text className="text-sm">{item.text}</Text>
             </UnderlineNav.Item>

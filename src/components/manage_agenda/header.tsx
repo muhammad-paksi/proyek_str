@@ -28,7 +28,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-screen h-[7vh] flex items-center justify-between py-2 pl-7 pr-12 border-b-0 border-b-gray-300 bg-white">
+      <header className="w-full h-[7vh] flex items-center justify-between py-2 pl-7 pr-12 border-b-0 border-b-gray-300 bg-white">
         {/* LEFT NAV */}
         <div className="h-full w-fit flex items-center">
           <Tooltip
@@ -64,7 +64,7 @@ export default function Header() {
               timezone={'Asia/Jakarta'} 
               locale="id-ID" 
               ticking={true} 
-              className={`text-xl font-medium ${suse.className}`} 
+              className={`text-lg font-medium ${suse.className}`} 
             />
           </div>
         </div>

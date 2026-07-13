@@ -88,8 +88,6 @@ export default function Page() {
 
   return (
     <>
-      <UnderlineNavigation />
-
       <main className="w-screen h-[73vh] pl-6 pr-5 ">
         {groupedAgenda.length > 0 ? (
           <Table.Container>
