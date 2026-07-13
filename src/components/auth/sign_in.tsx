@@ -35,10 +35,6 @@ export default function SignIn() {
 
   const [rippleOnSignin, eventOnSignin] = useRipple();
   const [rippleOnGoogle, eventOnGoogle] = useRipple(rippleOptions);
-  const [rippleOnApple, eventOnApple] = useRipple(rippleOptions);
-  const [rippleOnVK, eventOnVK] = useRipple(rippleOptions);
-  const [rippleOnWeChat, eventOnWeChat] = useRipple(rippleOptions);
-  const [rippleOnHF, eventOnHF] = useRipple(rippleOptions);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
