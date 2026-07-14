@@ -5,13 +5,6 @@ import QueryProvider from "@/components/query_provider";
 import { ConfigProvider } from 'antd';
 import locale from 'antd/locale/id_ID';
 
-// Import Day.js library and its matching locale
-import dayjs from 'dayjs';
-import 'dayjs/locale/id';
-
-// Activate the Day.js locale globally
-dayjs.locale('id');
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

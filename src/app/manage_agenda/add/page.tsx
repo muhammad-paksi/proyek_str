@@ -8,6 +8,12 @@ import { OneSquareIcon, TwoSquareIcon } from '@hugeicons/core-free-icons'
 import { Button, FormControl, Heading, Text, Textarea, TextInput, Timeline } from '@primer/react';
 import { lora, nunito, shantell_sans, suse } from "@/lib/font";
 import UploadDropbox from "@/components/manage_agenda/upload-dropbox";
+// Import Day.js library and its matching locale
+import dayjs from 'dayjs';
+import 'dayjs/locale/id';
+
+// Activate the Day.js locale globally
+dayjs.locale('id');
 
 export default function Page() {
   const [rippleOnSubmit, eventOnSubmit] = useRipple({ color: "rgba(0, 0, 0, 0.2)" });
@@ -46,7 +52,7 @@ export default function Page() {
                   <DatePicker format={"DD MMMM YYYY"} className={`w-[50%]`} placement="bottomLeft" />
                   <FormControl.Caption className="">
                     Misal:&nbsp;
-                    <span className="font-medium text-blue-500">20-07-2026</span>
+                    <span className="font-medium text-blue-500">20 Juli 2026</span>
                   </FormControl.Caption>
                 </FormControl>
               </Timeline.Body>
