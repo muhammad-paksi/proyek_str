@@ -9,7 +9,7 @@ export default function UploadDropbox({ format }: { format?: string }) {
   const [messageApi, contextHolder] = message.useMessage();
   
   // 1. Buat state untuk memantau file yang ada di komponen
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  // const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const props: UploadProps = {
     name: 'file',
@@ -45,7 +45,7 @@ export default function UploadDropbox({ format }: { format?: string }) {
   return (
     <>
       {contextHolder}
-      <Dragger {...props} listType="picture">
+      <Dragger {...props} listType="picture" pastable>
         {/* {fileList.length === 0 && ( */}
           <>
             <p className="ant-upload-drag-icon">
