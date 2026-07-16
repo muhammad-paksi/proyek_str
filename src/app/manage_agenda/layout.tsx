@@ -6,7 +6,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const id = (await params).id; // Ambil ID dari URL
 
   return {
-    title: ``,
+    title: `Kelola Agenda | SI Diseminasi`,
     description: ``
   };
 }

@@ -24,7 +24,7 @@ export default function Page() {
       <main className="border-r-0 border-r-red-400 w-full overflow-hidden pl-20">
         <div className="h-fit max-w-md flex flex-col gap-4 pt-8 pb-2 px-4 border-r-0 border-r-gray-400 border-0 font-sans bg-white">
           <div>
-            <h2 className={`text-xl font-semibold ${lora.className}`}>
+            <h2 className={`mb-1 text-xl font-semibold ${lora.className}`}>
               Tambah poster agenda
             </h2>
             <Text size="medium" weight="normal" className="block text-neutral-500">
@@ -38,8 +38,8 @@ export default function Page() {
           {/* === Form Tambah Poster ==== */}
           <Timeline clipSidebar>
             {/* NO. 1 */}
-            <Timeline.Item>
-              <Timeline.Badge className={`text-sm font-medium ${lora.className}`}>1</Timeline.Badge>
+            <Timeline.Item condensed>
+              <Timeline.Badge className={`-pt-5! py-5! text-sm font-normal ${lora.className}`}>1</Timeline.Badge>
               <Timeline.Body>
                 <FormControl aria-label="project-name-field" className="flex-none">
                   <FormControl.Label
@@ -47,20 +47,40 @@ export default function Page() {
                     requiredText=""
                   // className="mb-1 w-fit block text-sm font-semibold text-gray-900 cursor-pointer"
                   >
-                    Tentukan tanggal <span className="text-red-500">*</span>
+                    Nama agenda <span className="text-red-500">*</span>
                   </FormControl.Label>
-                  <DatePicker format={"DD MMMM YYYY"} className={`w-[50%]`} placement="bottomLeft" />
+                  <TextInput className={`w-full`} />
                   <FormControl.Caption className="">
                     Misal:&nbsp;
-                    <span className="font-medium text-blue-500">20 Juli 2026</span>
+                    <span className="font-medium text-purple-500">Yudisium semester ganjil</span>
                   </FormControl.Caption>
                 </FormControl>
               </Timeline.Body>
             </Timeline.Item>
 
             {/* NO. 2 */}
-            <Timeline.Item condensed>
-              <Timeline.Badge className={`text-sm font-medium ${lora.className}`}>2</Timeline.Badge>
+            <Timeline.Item>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>2</Timeline.Badge>
+              <Timeline.Body className="border-0">
+                <FormControl aria-label="project-name-field" className="flex-none border-0 border-red-500">
+                  <FormControl.Label
+                    required
+                    requiredText=""
+                  // className="mb-1 w-fit block text-sm font-semibold text-gray-900 cursor-pointer"
+                  >
+                    Tentukan tanggal <span className="text-red-500">*</span>
+                  </FormControl.Label>
+                  <DatePicker format={"DD MMMM YYYY"} className={`w-[55%]`} placement="bottomLeft" />
+                  <FormControl.Caption className="">
+                    Jika acara terdiri dari beberapa hari, cukup masukkan tanggal hari pertama.
+                  </FormControl.Caption>
+                </FormControl>
+              </Timeline.Body>
+            </Timeline.Item>
+
+            {/* NO. 3 */}
+            <Timeline.Item>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>3</Timeline.Badge>
               <Timeline.Body>
                 <FormControl aria-label="project-desc-field" className="flex-none">
                   <FormControl.Label
@@ -76,9 +96,9 @@ export default function Page() {
               </Timeline.Body>
             </Timeline.Item>
 
-            {/* NO. 3 */}
+            {/* NO. 4 */}
             <Timeline.Item className="flex items-end">
-              <Timeline.Badge className={`text-sm font-semibold ${lora.className}`}>3</Timeline.Badge>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>4</Timeline.Badge>
               <Timeline.Body>
                 <Button variant="primary">Simpan</Button>
               </Timeline.Body>

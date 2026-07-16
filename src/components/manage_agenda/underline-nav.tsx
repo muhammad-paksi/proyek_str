@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { ActionList, ActionMenu, IconButton, Text, UnderlineNav } from '@primer/react';
 import { ClipboardList, ListPlus, Menu } from "lucide-react";
-import { mona_sans, noto_sans, suse } from "@/lib/font";
+import { lora, mona_sans, noto_sans, nunito, shantell_sans, suse } from "@/lib/font";
 
 export default function UnderlineNavigation(){
   const pathname = usePathname();
@@ -29,9 +29,8 @@ export default function UnderlineNavigation(){
               leadingVisual={item.icon || ""}
               // Jika cocok, berikan nilai "page", jika tidak, berikan undefined
               aria-current={isCurrent ? "page" : undefined}
-              className={`${mona_sans.className}`}
             >
-              <Text className="text-sm">{item.text}</Text>
+              <Text className={`${mona_sans.className}`}>{item.text}</Text>
             </UnderlineNav.Item>
           );
         })}
