@@ -8,6 +8,18 @@ import { suse } from "@/lib/font";
 import BaseUIScrollWrapper from "@/components/wrapper/baseui_scroll_wrapper";
 import NavMenuWrapper from "@/components/wrapper/nav_menu_wrapper";
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+// 1. Extend Day.js with required plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+// 2. Target a specific timezone and get the year
+const year = dayjs().tz("Asia/Jakarta").year(); 
+// console.log(year);
+
 /** A component that appears on the side of page. */
 export default function SideBar({
   withBurger = false,
@@ -102,8 +114,8 @@ export default function SideBar({
           <Link href={"https://jti.polinema.ac.id/tata-tertib/"} className="block ml-3.25 w-fit px-0.5 drawerlink-gray-500 text-sm font-semibold">
             Syarat dan Ketentuan
           </Link>
-          <div className="ml-3.25 mt-1 w-fit px-0.5 text-[#C19A6B] text-sm font-semibold">
-            © 2026 SI Diseminasi
+          <div className="ml-3.25 mt-3 w-fit px-0.5 text-[#C19A6B] text-sm font-semibold">
+            © {year} SI Diseminasi
           </div>
         </footer>
       </div>
