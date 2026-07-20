@@ -25,3 +25,10 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: '/dasbor/:path*',
 }
+
+/** BEING LEFT HERE IN CASE NEEDED LATER */
+// Gabungkan kembali menjadi URL baru
+// const newUrl = new URL(pathname + search, request.url);
+    
+// Redirect ke URL yang sudah bersih
+// return NextResponse.redirect(newUrl);
