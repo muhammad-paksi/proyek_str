@@ -41,24 +41,3 @@ export default function Page() {
     </>
   )
 }
-
-/** Raw row type matching the agenda schema */
-type AgendaRow = {
-  id: number;
-  nama: string | null;
-  deskripsi?: string | null;
-  waktu: Date;
-  imageNumber: number | null;
-};
-
-/** Grouped agenda: rows with same nama+waktu merged, images collected */
-type GroupedAgenda = {
-  /** Composite key for DataTable: "nama|waktu" */
-  id: string;
-  nama: string | null;
-  deskripsi: string | null;
-  waktu: Date;
-  images: { idAgenda: number; imageURL: string }[];
-  /** All idAgenda values in this group */
-  ids: number[];
-};

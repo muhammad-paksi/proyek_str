@@ -5,7 +5,7 @@ import { useRipple } from 'use-ripple-hook';
 import { useQuery } from "@tanstack/react-query";
 import { Card, Button as ButtonHero } from "@heroui/react";
 import { Table, DataTable } from '@primer/react/experimental';
-import { CalendarX, ClipboardList, Eraser, ListPlus, Menu, Microscope, Paperclip, PenLine } from "lucide-react";
+import { CalendarX, ClipboardList, Eraser, ListPlus, Menu, Eye, Paperclip, PenLine } from "lucide-react";
 import { KebabHorizontalIcon } from '@primer/octicons-react';
 import { ActionList, ActionMenu, IconButton, Text } from '@primer/react';
 import { lora, mona_sans, noto_sans, shantell_sans, suse } from "@/lib/font";
@@ -98,11 +98,11 @@ export default function TableAgenda() {
                       </Text>
                     ) : (
                       <>
-                        <Text className={`italic! text-gray-400 ${noto_sans.className}`}>
+                        <Text aria-label="Item ini tidak memiliki deskripsi" className={`italic! text-gray-400 ${noto_sans.className}`}>
                           Tidak ada deskripsi
                         </Text>
                       </>
-                    )  
+                    )
                   );
                 },
               }, {
@@ -146,20 +146,20 @@ export default function TableAgenda() {
                     <ActionMenu>
                       <ActionMenu.Anchor>
                         <IconButton
-                          aria-label={`Actions: ${row.nama}`}
-                          title={`Actions: ${row.nama}`}
+                          aria-label={`Lihat, edit, atau hapus agenda`}
+                          // title={`Lihat, edit, atau hapus agenda`}
                           size="small"
                           icon={KebabHorizontalIcon}
                           variant="invisible"
                           className="min-w-0 min-h-0 w-auto! h-auto! px-1! py-0.75!"
                         />
                       </ActionMenu.Anchor>
-                      <ActionMenu.Overlay>
+                      <ActionMenu.Overlay className="min-w-fit!">
                         <ActionList>
-                          <ActionList.Item><ActionList.LeadingVisual><PenLine  size={12} strokeWidth={2}/></ActionList.LeadingVisual> Edit</ActionList.Item>
-                          <ActionList.Item><ActionList.LeadingVisual><Microscope size={12} strokeWidth={2}/></ActionList.LeadingVisual> Lihat</ActionList.Item>
+                          <ActionList.Item className=""><span className={`font-medium! ${mona_sans.className}`}>Edit</span><ActionList.TrailingVisual className="ml-5"><PenLine size={12} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
+                          <ActionList.Item className=""><span className={`font-medium! ${mona_sans.className}`}>Lihat</span><ActionList.TrailingVisual className="ml-5"><Eye size={15} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
                           <ActionList.Divider />
-                          <ActionList.Item variant="danger"><ActionList.LeadingVisual><Eraser size={12} strokeWidth={2}/></ActionList.LeadingVisual> Hapus</ActionList.Item>
+                          <ActionList.Item className="" variant="danger"><span className={`font-medium! ${mona_sans.className}`}>Hapus</span><ActionList.TrailingVisual className="ml-5"><Eraser size={14} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
                         </ActionList>
                       </ActionMenu.Overlay>
                     </ActionMenu>
