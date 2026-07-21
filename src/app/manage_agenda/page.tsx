@@ -1,20 +1,21 @@
 "use client"
 
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Carousel, DatePicker, Input, type GetProps } from 'antd'
+import { usePathname } from "next/navigation";
 import Tooltip from "@mui/material/Tooltip";
 import { useRipple } from 'use-ripple-hook';
 import { useQuery } from "@tanstack/react-query";
 import { Card, Button as ButtonHero } from "@heroui/react";
-import { Table, DataTable } from '@primer/react/experimental';
-import { Calendar1, CalendarX, ClipboardList, ListPlus, Menu } from "lucide-react";
 import { KebabHorizontalIcon } from '@primer/octicons-react';
-import { ActionList, ActionMenu, IconButton, Text } from '@primer/react';
-import { lora, mona_sans, noto_sans, shantell_sans, suse } from "@/lib/font";
+import { Carousel, DatePicker, Input, type GetProps } from 'antd'
+import { Table, DataTable, Dialog } from '@primer/react/experimental';
+import { ActionList, ActionMenu, Button, IconButton, Text } from '@primer/react';
+import { Calendar1, CalendarX, ClipboardList, ListPlus, Menu } from "lucide-react";
+import { lora, mona_sans, noto_sans, nunito, roboto, shantell_sans, suse } from "@/lib/font";
 import TableAgenda from "@/components/manage_agenda/tabel";
+
 // Import Day.js library and its matching locale
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
@@ -28,6 +29,18 @@ const { Search } = Input;
 const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
 export default function Page() {
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: number;
+    nama: string;
+    triggerEl: HTMLElement | null;
+  }>({ id: 0, nama: "", triggerEl: null });
+  // const returnFocusRef = useRef<HTMLButtonElement>(null);
+
+  const handleClose = () => {
+    setDeleteTarget({ id: -1, nama: "", triggerEl: null });
+    setIsDeleteOpen(false);
+  };
 
   return (
     <>
@@ -36,8 +49,34 @@ export default function Page() {
           <DatePicker format={"DD MMM YYYY"} placeholder="Pilih Tanggal" className="w-xs" suffixIcon={<Calendar1 className="text-blue-400" size={16} strokeWidth={2} />} />
           <Search placeholder="Cari nama agenda" onSearch={onSearch} enterButton />
         </div>
-        <TableAgenda />
+        <TableAgenda 
+          onSelectDelete={(id, nama, element) => {
+            setDeleteTarget({ id, nama, triggerEl: element });
+            setIsDeleteOpen(true);
+          }} 
+        />
       </main>
+      {isDeleteOpen && (
+        <Dialog
+          title= {<span className={`font-semibold ${mona_sans.className}`}>Hapus agenda</span>}  
+          onClose= { handleClose }
+          footerButtons={[
+            {
+              buttonType: 'default', 
+              content: <span className={`font-semibold ${mona_sans.className}`}>Cancel</span>, 
+              onClick: handleClose
+            }, {
+              buttonType: 'danger', 
+              content: <span className={`font-semibold ${mona_sans.className}`}>Delete the universe</span>
+            },
+          ]}
+          returnFocusRef={{ current: deleteTarget.triggerEl ?? null }}
+        >
+          <p className={`${mona_sans.className}`}>
+            This is where the dialog content would go.
+          </p>
+        </Dialog>
+      )}
     </>
   )
 }

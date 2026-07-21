@@ -10,7 +10,7 @@ import { KebabHorizontalIcon } from '@primer/octicons-react';
 import { ActionList, ActionMenu, IconButton, Text } from '@primer/react';
 import { lora, mona_sans, noto_sans, shantell_sans, suse } from "@/lib/font";
 
-export default function TableAgenda() {
+export default function TableAgenda({ onSelectDelete }: { onSelectDelete: (id: any, nama: string, element: any) => void }) {
   const rippleOptions = { color: "rgba(0, 0, 0, 0.2)" };
   const [rippleOnAdd, eventOnAdd] = useRipple(rippleOptions);
 
@@ -159,7 +159,19 @@ export default function TableAgenda() {
                           <ActionList.Item className=""><span className={`font-medium! ${mona_sans.className}`}>Edit</span><ActionList.TrailingVisual className="ml-5"><PenLine size={12} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
                           <ActionList.Item className=""><span className={`font-medium! ${mona_sans.className}`}>Lihat</span><ActionList.TrailingVisual className="ml-5"><Eye size={15} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
                           <ActionList.Divider />
-                          <ActionList.Item className="" variant="danger"><span className={`font-medium! ${mona_sans.className}`}>Hapus</span><ActionList.TrailingVisual className="ml-5"><Eraser size={14} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
+                          <ActionList.Item 
+                            className="" 
+                            variant="danger"
+                            onClick={(e) => {
+                              // e.currentTarget/target mengambil elemen tombol pemicu yang sedang aktif
+                              onSelectDelete(row.id, row.nama, e.currentTarget as HTMLElement);
+                            }}
+                          >
+                            <span className={`font-medium! ${mona_sans.className}`}>Hapus</span>
+                            <ActionList.TrailingVisual className="ml-5">
+                              <Eraser size={14} strokeWidth={2} />
+                            </ActionList.TrailingVisual>
+                          </ActionList.Item>
                         </ActionList>
                       </ActionMenu.Overlay>
                     </ActionMenu>
@@ -194,7 +206,7 @@ export default function TableAgenda() {
 /** Raw row type matching the agenda schema */
 type AgendaRow = {
   id: number;
-  nama: string | null;
+  nama: string;
   deskripsi?: string | null;
   waktu: Date;
   imageNumber: number | null;
