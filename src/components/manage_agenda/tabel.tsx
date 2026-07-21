@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRipple } from 'use-ripple-hook';
 import { useQuery } from "@tanstack/react-query";
 import { Card, Button as ButtonHero } from "@heroui/react";
-import { Table, DataTable } from '@primer/react/experimental';
-import { CalendarX, ClipboardList, Eraser, ListPlus, Menu, Eye, Paperclip, PenLine } from "lucide-react";
 import { KebabHorizontalIcon } from '@primer/octicons-react';
+import { Table, DataTable } from '@primer/react/experimental';
 import { ActionList, ActionMenu, IconButton, Text } from '@primer/react';
+import { CalendarX, ClipboardList, Eraser, ListPlus, Menu, Eye, Paperclip, PenLine } from "lucide-react";
 import { lora, mona_sans, noto_sans, shantell_sans, suse } from "@/lib/font";
 
 export default function TableAgenda({ onSelectDelete }: { onSelectDelete: (id: any, nama: string, element: any) => void }) {
+  const router = useRouter();
   const rippleOptions = { color: "rgba(0, 0, 0, 0.2)" };
   const [rippleOnAdd, eventOnAdd] = useRipple(rippleOptions);
 
@@ -156,11 +158,23 @@ export default function TableAgenda({ onSelectDelete }: { onSelectDelete: (id: a
                       </ActionMenu.Anchor>
                       <ActionMenu.Overlay className="min-w-fit!">
                         <ActionList>
-                          <ActionList.Item className=""><span className={`font-medium! ${mona_sans.className}`}>Edit</span><ActionList.TrailingVisual className="ml-5"><PenLine size={12} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
-                          <ActionList.Item className=""><span className={`font-medium! ${mona_sans.className}`}>Lihat</span><ActionList.TrailingVisual className="ml-5"><Eye size={15} strokeWidth={2} /></ActionList.TrailingVisual> </ActionList.Item>
+                          <ActionList.Item className="" onClick={() => {
+                            router.push(`/manage_agenda/edit/${row.id}`);
+                          }}>
+                            <span className={`font-medium! ${mona_sans.className}`}>Edit</span>
+                            <ActionList.TrailingVisual className="ml-5"><PenLine size={12} strokeWidth={2} /></ActionList.TrailingVisual>
+                          </ActionList.Item>
+                          <ActionList.Item className=""
+                            onClick={() => {
+                              router.push(`/manage_agenda/view/${row.id}`);
+                            }}
+                          >
+                            <span className={`font-medium! ${mona_sans.className}`}>Lihat</span>
+                            <ActionList.TrailingVisual className="ml-5"><Eye size={15} strokeWidth={2} /></ActionList.TrailingVisual>
+                          </ActionList.Item>
                           <ActionList.Divider />
-                          <ActionList.Item 
-                            className="" 
+                          <ActionList.Item
+                            className=""
                             variant="danger"
                             onClick={(e) => {
                               // e.currentTarget/target mengambil elemen tombol pemicu yang sedang aktif
