@@ -27,7 +27,8 @@ export default function Header() {
   /* Example relative url: "/dasbor/lantai_6" */
   const floor = pathname.split("/")[2];
   const paths = pathname.split("/");
-  console.log(paths)
+  // console.log(paths)
+
   return (
     <>
       <header className={`

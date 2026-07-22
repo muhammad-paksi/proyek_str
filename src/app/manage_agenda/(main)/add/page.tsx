@@ -9,7 +9,7 @@ import { Button, FormControl, Heading, Text, Textarea, TextInput, Timeline } fro
 import { lora, nunito, shantell_sans, suse } from "@/lib/font";
 import UploadDropbox from "@/components/manage_agenda/upload-dropbox";
 // Import Day.js library and its matching locale
-import dayjs from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
 import 'dayjs/locale/id';
 
 // Activate the Day.js locale globally
@@ -52,7 +52,7 @@ export default function Page() {
                   <TextInput className={`w-full`} />
                   <FormControl.Caption className="">
                     Misal:&nbsp;
-                    <span className="font-medium text-purple-500">Yudisium semester ganjil</span>
+                    <span className="font-medium text-green-600">Yudisium semester ganjil</span>
                   </FormControl.Caption>
                 </FormControl>
               </Timeline.Body>
@@ -70,9 +70,17 @@ export default function Page() {
                   >
                     Tentukan tanggal <span className="text-red-500">*</span>
                   </FormControl.Label>
-                  <DatePicker format={"DD MMMM YYYY"} className={`w-[55%]`} placement="bottomLeft" />
+                  <DatePicker
+                    format={"DD MMMM YYYY"}
+                    // defaultValue={dayjs()}
+                    className={`w-[55%]`} placement="bottomLeft"
+                    onChange={(date: Dayjs | null, dateString: string | null) => {
+                      // console.log("Date (format: YYYY-MM-DD):", dayjs(date).format("YYYY-MM-DD"));
+                      // console.log("dateString:", dateString);
+                    }}
+                  />
                   <FormControl.Caption className="">
-                    Jika acara terdiri dari beberapa hari, cukup masukkan tanggal hari pertama.
+                    Jika acara terdiri dari beberapa hari, cukup masukkan tanggal hari pertama. Misal: <span className="font-semibold text-blue-400">{dayjs().format("DD MMMM YYYY")}</span>
                   </FormControl.Caption>
                 </FormControl>
               </Timeline.Body>
