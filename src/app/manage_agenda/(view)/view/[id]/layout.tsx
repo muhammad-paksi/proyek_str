@@ -1,21 +1,20 @@
-import Link from "next/link";
-import Header from "@/components/manage_agenda/header";
-import UnderlineNavigation from "@/components/manage_agenda/underline-nav";
+import AgendaBreadcrumbs from "@/components/manage_agenda/view-breadcrumbs";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id; // Ambil ID dari URL
 
   return {
-    title: `Kelola Agenda | SI Diseminasi`,
-    description: ``
+    title: `Lihat - Agenda JTI | SI Diseminasi`,
+    description: `This is where user is viewing information of a specific agenda.`
   };
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-
   return (
     <>
-      <Header />
+      <div className="ml-7 mt-3">
+        <AgendaBreadcrumbs />
+      </div>
       {children}
     </>
   )

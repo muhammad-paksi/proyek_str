@@ -1,9 +1,11 @@
+import "./globals.css";
+import 'react-photo-view/dist/react-photo-view.css';
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import QueryProvider from "@/components/query_provider";
 import { ConfigProvider } from 'antd';
 import locale from 'antd/locale/id_ID';
+import QueryProvider from "@/components/query_provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

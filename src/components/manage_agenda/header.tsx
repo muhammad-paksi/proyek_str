@@ -22,13 +22,24 @@ const Clock = dynamic(() => import('react-live-clock'), { ssr: false });
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  /* Example relative url: "/dasbor/lantai_6" */
-  const floor = pathname.split("/")[2];
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
+  /* Example relative url: "/dasbor/lantai_6" */
+  const floor = pathname.split("/")[2];
+  const paths = pathname.split("/");
+  console.log(paths)
   return (
     <>
-      <header className="w-full h-[7vh] flex items-center justify-between py-2 pl-7 pr-12 border-b-0 border-b-gray-300 bg-white">
+      <header className={`
+        w-full h-[7vh] 
+        flex items-center justify-between 
+        py-2 pl-7 pr-12 
+        bg-white 
+        ${paths[1] === "manage_agenda" && paths[2] === "view" 
+          ? "border-b border-b-gray-300"
+          : "border-b-0 border-b-gray-300"
+        }
+      `}>
         {/* LEFT NAV */}
         <div className="h-full w-fit flex items-center">
           <Tooltip

@@ -30,6 +30,7 @@
         "react-dom": "^19.2.7",
         "react-hook-form": "^7.77.0",
         "react-live-clock": "^6.1.25",
+        "react-photo-view": "^1.2.7",
         "use-ripple-hook": "^2.0.0",
         "valibot": "^1.4.0",
         "validator": "^13.15.35",
@@ -841,6 +842,8 @@
     "react-live-clock": ["react-live-clock@6.1.25", "", { "dependencies": { "moment": "^2.29.1", "moment-timezone": "^0.5.33" }, "peerDependencies": { "react": "^16.14.0 || ^17 || ^18", "react-moment": "1.1.3" } }, "sha512-IjhRtgpseA2FQjpHFD9OUYUQSKXKMvcHlzDp9QPFjWZe3mqORd6OcL4bRz48JB8IQYSoIRvqDgDzwrkhSMraxg=="],
 
     "react-moment": ["react-moment@1.1.3", "", { "peerDependencies": { "moment": "^2.29.0", "prop-types": "^15.7.0", "react": "^16.0 || ^17.0.0 || ^18.0.0" } }, "sha512-8EPvlUL8u6EknPp1ISF5MQ3wx2OHJVXIP/iZc4wRh3iV3XozftZERDv9ANZeAtMlhNNQHdFoqcZHFUkBSTONfA=="],
+
+    "react-photo-view": ["react-photo-view@1.2.7", "", { "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-MfOWVPxuibncRLaycZUNxqYU8D9IA+rbGDDaq6GM8RIoGJal592hEJoRAyRSI7ZxyyJNJTLMUWWL3UIXHJJOpw=="],
 
     "react-popper": ["react-popper@2.3.0", "", { "dependencies": { "react-fast-compare": "^3.0.1", "warning": "^4.0.2" }, "peerDependencies": { "@popperjs/core": "^2.0.0", "react": "^16.8.0 || ^17 || ^18", "react-dom": "^16.8.0 || ^17 || ^18" } }, "sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q=="],
 

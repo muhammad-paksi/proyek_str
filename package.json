@@ -33,6 +33,7 @@
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.77.0",
     "react-live-clock": "^6.1.25",
+    "react-photo-view": "^1.2.7",
     "use-ripple-hook": "^2.0.0",
     "valibot": "^1.4.0",
     "validator": "^13.15.35"
