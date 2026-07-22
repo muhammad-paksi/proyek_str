@@ -159,14 +159,14 @@ export default function TableAgenda({ onSelectDelete }: { onSelectDelete: (id: a
                       <ActionMenu.Overlay className="min-w-fit!">
                         <ActionList>
                           <ActionList.Item className="" onClick={() => {
-                            router.push(`/manage_agenda/edit/${row.id}`);
+                            router.push(`/manage_agenda/${row.id}/edit`);
                           }}>
                             <span className={`font-medium! ${mona_sans.className}`}>Edit</span>
                             <ActionList.TrailingVisual className="ml-5"><PenLine size={12} strokeWidth={2} /></ActionList.TrailingVisual>
                           </ActionList.Item>
                           <ActionList.Item className=""
                             onClick={() => {
-                              router.push(`/manage_agenda/view/${row.id}`);
+                              router.push(`/manage_agenda/${row.id}/view`);
                             }}
                           >
                             <span className={`font-medium! ${mona_sans.className}`}>Lihat</span>

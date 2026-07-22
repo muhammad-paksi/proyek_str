@@ -38,8 +38,8 @@ export default function Page() {
           {/* === Form Tambah Poster ==== */}
           <Timeline clipSidebar>
             {/* NO. 1 */}
-            <Timeline.Item condensed>
-              <Timeline.Badge className={`-pt-5! py-5! text-sm font-normal ${lora.className}`}>1</Timeline.Badge>
+            <Timeline.Item>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>1</Timeline.Badge>
               <Timeline.Body>
                 <FormControl aria-label="project-name-field" className="flex-none">
                   <FormControl.Label

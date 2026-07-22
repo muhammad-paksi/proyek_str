@@ -1,14 +1,13 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { Breadcrumbs } from '@heroui/react';
 import { suse } from '@/lib/font';
 
 export default function AgendaBreadcrumbs() {
-  const router = useRouter();
+  const { id } = useParams();
   const pathname = usePathname();
-
   const paths = pathname.split("/").filter(Boolean);
 
   return (
@@ -23,7 +22,7 @@ export default function AgendaBreadcrumbs() {
         view
       </Breadcrumbs.Item>
       <Breadcrumbs.Item href={`${pathname}`} key={3} className={suse.className}>
-        {paths.at(-1)}
+        {id}
       </Breadcrumbs.Item>
     </Breadcrumbs>
   )
