@@ -9,10 +9,11 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { OneSquareIcon, TwoSquareIcon } from '@hugeicons/core-free-icons'
 import { Button, FormControl, Heading, Text, Textarea, TextInput, Timeline } from '@primer/react';
 import { lora, nunito, shantell_sans, suse } from "@/lib/font";
-import UploadDropbox from "@/components/manage_agenda/upload-dropbox";
+import UploadEditGallery from "@/components/manage_agenda/upload-edit-gallery";
 // Import Day.js library and its matching locale
 import dayjs, { type Dayjs } from 'dayjs';
 import 'dayjs/locale/id';
+import { Plus, Trash } from "lucide-react";
 
 // Activate the Day.js locale globally
 dayjs.locale('id');
@@ -23,6 +24,7 @@ export default function Page() {
   const [nameInput, setNameInput] = useState<string>('');
   const [dateInput, setDateInput] = useState<string | null>(null);
   const [imageList, setImageList] = useState<any[]>([]);
+  const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
 
   const [rippleOnSubmit, eventOnSubmit] = useRipple({ color: "rgba(0, 0, 0, 0.2)" });
   const [isLoading, setIsLoading] = useState(false);
@@ -147,11 +149,22 @@ export default function Page() {
                   <FormControl.Label
                   // className="mb-1 w-fit block text-sm font-semibold text-gray-900 cursor-pointer"
                   >
-                    Pilih berkas <span className="text-red-500">*</span>
+                    Poster saat ini & unggah baru <span className="text-red-500">*</span>
                   </FormControl.Label>
-                  <UploadDropbox format="image/*" />
-                  <FormControl.Caption className="">
-                    Tipe: <span className="">.jpg, .jpeg, .png</span>
+                  <UploadEditGallery
+                    existingImages={agendaDetail?.imageList}
+                    format="image/*"
+                    onDeleteExisting={(ids) => setDeletedImageIds(ids)}
+                  />
+                  <FormControl.Caption className="mt-3! w-full border-0">
+                    Klik{" "}
+                    <div className="inline-flex items-center align-middle">
+                      <Trash size={14} strokeWidth={2} />
+                    </div> pada gambar untuk menghapus.
+                    Klik{" "} 
+                    <span className="inline-flex items-center align-middle">
+                      <Plus size={14} strokeWidth={2} />
+                    </span> untuk menambah.
                   </FormControl.Caption>
                 </FormControl>
               </Timeline.Body>
@@ -161,7 +174,7 @@ export default function Page() {
             <Timeline.Item className="flex items-end">
               <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>4</Timeline.Badge>
               <Timeline.Body>
-                <Button variant="primary">Simpan</Button>
+                <Button variant="primary" className="bg-blue-500!">Perbarui</Button>
               </Timeline.Body>
             </Timeline.Item>
           </Timeline>
