@@ -107,7 +107,7 @@ export default function UploadEditGallery({
           className="flex flex-col items-center justify-center border-0 bg-transparent cursor-pointer"
         >
           <PlusOutlined />
-          <div className="mt-2 text-xs">Unggah</div>
+          <div className="mt-2 text-xs">Tambah berkas</div>
         </button>
       </Upload>
 

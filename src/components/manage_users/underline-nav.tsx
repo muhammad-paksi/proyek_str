@@ -1,0 +1,40 @@
+"use client"
+
+import { usePathname } from "next/navigation";
+import { ActionList, ActionMenu, IconButton, Text, UnderlineNav } from '@primer/react';
+import { ClipboardList, ListPlus, Menu } from "lucide-react";
+import { lora, mona_sans, noto_sans, nunito, shantell_sans, suse } from "@/lib/font";
+
+export default function UnderlineNavigation(){
+  const pathname = usePathname();
+  const navItems = [
+    {
+      text: "Manage",
+      href: "/manage_users",
+      icon: <ClipboardList size={18} />,
+    },
+    { text: "Add", href: "/manage_users/add", icon: <ListPlus size={18} /> },
+  ];
+
+  return (
+    <>
+      <UnderlineNav aria-label="Users" className="">
+        {navItems.map((item) => {
+          // Cek apakah pathname saat ini cocok dengan href tab
+          const isCurrent = pathname === item.href;
+          return (
+            <UnderlineNav.Item
+              key={item.href}
+              href={item.href}
+              leadingVisual={item.icon || ""}
+              // Jika cocok, berikan nilai "page", jika tidak, berikan undefined
+              aria-current={isCurrent ? "page" : undefined}
+            >
+              <Text className={`${mona_sans.className}`}>{item.text}</Text>
+            </UnderlineNav.Item>
+          );
+        })}
+      </UnderlineNav>
+    </>
+  )
+}

@@ -60,7 +60,18 @@ export const perwakilan = pgTable("perwakilan",{
   primaryKey({ columns: [table.id], name: "perwakilan_id" }),
 ])
 
-
+export const role = pgTable(
+  "role",
+  {
+    id: bigserial("id", { mode: "number" }).notNull(),
+    username: varchar({ length: 75 }).notNull(),
+    role: varchar({length: 50}).notNull(),
+    kelas: varchar("nama_hari", { length: 20 }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.id], name: "role_id" }),
+  ],
+);
 
 export const agenda = pgTable(
   "agenda",
