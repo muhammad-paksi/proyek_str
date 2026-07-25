@@ -21,9 +21,10 @@ interface AgendaSelectorProps {
   selectedIds: Set<number>;
   onSelect: (item: AvailableAgenda) => void;
   isLoading?: boolean;
+  readOnly?: boolean;
 }
 
-export default function AgendaSelector({ items, selectedIds, onSelect, isLoading }: AgendaSelectorProps) {
+export default function AgendaSelector({ items, selectedIds, onSelect, isLoading, readOnly = false }: AgendaSelectorProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredItems = useMemo(() => {
@@ -68,6 +69,7 @@ export default function AgendaSelector({ items, selectedIds, onSelect, isLoading
           allowClear
           enterButton={false}
           className="agenda-search"
+          disabled={readOnly}
         />
       </div>
 
@@ -111,9 +113,9 @@ export default function AgendaSelector({ items, selectedIds, onSelect, isLoading
             return (
               <div
                 key={item.id}
-                className={`group relative flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 ease-out animate-[fadeIn_0.25s_ease-out] ${isSelected ? "bg-emerald-50/50 border-emerald-200 opacity-60 pointer-events-none" : "bg-white border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-blue-200 cursor-pointer"}`}
+                className={`group relative flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 ease-out animate-[fadeIn_0.25s_ease-out] ${isSelected ? "bg-emerald-50/50 border-emerald-200 opacity-60 pointer-events-none" : readOnly ? "bg-white border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)] opacity-70 pointer-events-none" : "bg-white border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-blue-200 cursor-pointer"}`}
                 style={{ animationDelay: `${index * 30}ms`, animationFillMode: "both" }}
-                onClick={() => !isSelected && onSelect(item)}
+                onClick={() => !readOnly && !isSelected && onSelect(item)}
               >
                 {/* Icon / Initial */}
                 <div className={`shrink-0 flex items-center justify-center w-8 h-8 mt-0.5 rounded-lg text-xs font-bold shadow-sm ${isSelected ? "bg-emerald-100 text-emerald-600" : "bg-linear-to-br from-blue-400 to-indigo-500 text-white"} ${suse.className}`}>
@@ -144,7 +146,7 @@ export default function AgendaSelector({ items, selectedIds, onSelect, isLoading
                 </div>
 
                 {/* Add button */}
-                {!isSelected && (
+                {!isSelected && !readOnly && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

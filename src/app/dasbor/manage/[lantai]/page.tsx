@@ -35,10 +35,18 @@ export default function Page() {
     },
   });
 
-  // Selected agenda IDs (state)
+  // Saved agenda IDs (persistent state across edits)
+  const [savedIds, setSavedIds] = useState<Set<number>>(
+    () => new Set(INITIAL_SELECTED[lantai] ?? [])
+  );
+
+  // Selected agenda IDs (draft state)
   const [selectedIds, setSelectedIds] = useState<Set<number>>(
     () => new Set(INITIAL_SELECTED[lantai] ?? [])
   );
+
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false);
 
   // Confirmation dialog state
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -60,13 +68,30 @@ export default function Page() {
   }, [allAgendas, selectedIds]);
 
   // Handlers
+  const handleEdit = useCallback(() => {
+    setIsEditing(true);
+    setSelectedIds(new Set(savedIds));
+  }, [savedIds]);
+
+  const handleCancel = useCallback(() => {
+    setIsEditing(false);
+    setSelectedIds(new Set(savedIds));
+  }, [savedIds]);
+
+  const handleSave = useCallback(() => {
+    setIsEditing(false);
+    setSavedIds(new Set(selectedIds));
+    // Here you would typically make an API call to save the changes
+  }, [selectedIds]);
+
   const handleSelect = useCallback((item: AvailableAgenda) => {
+    if (!isEditing) return;
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.add(item.id);
       return next;
     });
-  }, []);
+  }, [isEditing]);
 
   const handleRemove = useCallback((id: number) => {
     const agenda = allAgendas?.find((a) => a.id === id);
@@ -99,21 +124,50 @@ export default function Page() {
       <main className="w-full min-h-[85vh] px-8 pt-5 pb-8">
         {/* Page Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            {/* Floor icon */}
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-200/50">
-              <Layers size={18} strokeWidth={2} />
-              <span className={`absolute -bottom-0.5 -right-0.5 flex items-center justify-center w-4.5 h-4.5 rounded-md bg-white text-[10px] font-extrabold text-indigo-600 shadow-sm border border-indigo-100 ${suse.className}`}>
-                {lantaiNum}
-              </span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              {/* Floor icon */}
+              <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-violet-500 to-indigo-600 text-white shadow-lg shadow-indigo-200/50">
+                <Layers size={18} strokeWidth={2} />
+                <span className={`absolute -bottom-0.5 -right-0.5 flex items-center justify-center w-4.5 h-4.5 rounded-md bg-white text-[10px] font-extrabold text-indigo-600 shadow-sm border border-indigo-100 ${suse.className}`}>
+                  {lantaiNum}
+                </span>
+              </div>
+              <div>
+                <h1 className={`text-xl font-bold text-gray-900 ${lora.className}`}>
+                  Dashboard {lantaiDisplay}
+                </h1>
+                <p className={`text-sm text-gray-400 ${noto_sans.className}`}>
+                  Kelola agenda yang ditampilkan di dashboard {lantai}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className={`text-xl font-bold text-gray-900 ${lora.className}`}>
-                Dashboard {lantaiDisplay}
-              </h1>
-              <p className={`text-sm text-gray-400 ${noto_sans.className}`}>
-                Kelola agenda yang ditampilkan di dashboard {lantai}
-              </p>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 mt-1">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleCancel}
+                    className={`px-4 py-2 text-sm font-semibold text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors ${mona_sans.className}`}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className={`px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors ${mona_sans.className}`}
+                  >
+                    Simpan
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleEdit}
+                  className={`px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors ${mona_sans.className}`}
+                >
+                  Edit Dashboard
+                </button>
+              )}
             </div>
           </div>
 
@@ -137,6 +191,7 @@ export default function Page() {
               items={selectedAgendas}
               onRemove={handleRemove}
               lantai={lantai}
+              readOnly={!isEditing}
             />
           </div>
 
@@ -149,6 +204,7 @@ export default function Page() {
               selectedIds={selectedIds}
               onSelect={handleSelect}
               isLoading={isLoading}
+              readOnly={!isEditing}
             />
           </div>
         </div>

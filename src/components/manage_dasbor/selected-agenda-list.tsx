@@ -16,9 +16,10 @@ interface SelectedAgendaListProps {
   items: SelectedAgenda[];
   onRemove: (id: number) => void;
   lantai: string;
+  readOnly?: boolean;
 }
 
-export default function SelectedAgendaList({ items, onRemove, lantai }: SelectedAgendaListProps) {
+export default function SelectedAgendaList({ items, onRemove, lantai, readOnly = false }: SelectedAgendaListProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -35,12 +36,6 @@ export default function SelectedAgendaList({ items, onRemove, lantai }: Selected
               Ditampilkan di dashboard
             </p>
           </div>
-          {/* <div className="flex items-center gap-2">
-            <MonitorDot size={14} className="text-gray-400" />
-            <span className={`text-xs text-gray-500 ${noto_sans.className}`}>
-              {items.length} agenda ditampilkan di dashboard {lantai}
-            </span>
-          </div> */}
         </div>
         {items.length > 0 && (
           <span className={`inline-flex items-center justify-center min-w-6 h-6 px-2 text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 rounded-full ${suse.className}`}>
@@ -54,7 +49,7 @@ export default function SelectedAgendaList({ items, onRemove, lantai }: Selected
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full py-12 opacity-70">
             <div className="p-4 rounded-2xl bg-gray-50 border border-dashed border-gray-200 mb-4">
-              <CalendarX2 size={32} className="text-gray-300" />
+              <CalendarX2 size={32} className="text-gray-350" />
             </div>
             <p className={`text-sm font-medium text-gray-400 mb-1 ${mona_sans.className}`}>
               Belum ada agenda terpilih
@@ -97,13 +92,15 @@ export default function SelectedAgendaList({ items, onRemove, lantai }: Selected
                 </div>
 
                 {/* Remove button */}
-                <button
-                  onClick={() => onRemove(item.id)}
-                  className="shrink-0 p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all duration-150 cursor-pointer"
-                  title="Hapus dari dashboard"
-                >
-                  <Trash2 size={14} strokeWidth={2} />
-                </button>
+                {!readOnly && (
+                  <button
+                    onClick={() => onRemove(item.id)}
+                    className="shrink-0 p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all duration-150 cursor-pointer"
+                    title="Hapus dari dashboard"
+                  >
+                    <Trash2 size={14} strokeWidth={2} />
+                  </button>
+                )}
               </div>
             );
           })
@@ -111,7 +108,7 @@ export default function SelectedAgendaList({ items, onRemove, lantai }: Selected
       </div>
 
       {/* Footer info */}
-      {items.length > 0 && (
+      {items.length > 0 && !readOnly && (
         <div className="mt-3 pt-3 border-t border-gray-100">
           <p className={`text-[11px] text-gray-400 text-center ${noto_sans.className}`}>
             Agenda akan tetap tampil hingga dihapus secara manual.
