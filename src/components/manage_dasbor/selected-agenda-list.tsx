@@ -1,0 +1,123 @@
+"use client";
+
+import { useCallback } from "react";
+import { Text } from "@primer/react";
+import { CalendarCheck, CalendarX2, GripVertical, MonitorDot, Trash2, X } from "lucide-react";
+import { lora, mona_sans, noto_sans, suse } from "@/lib/font";
+
+export type SelectedAgenda = {
+  id: number;
+  nama: string;
+  deskripsi?: string | null;
+  waktu: Date;
+};
+
+interface SelectedAgendaListProps {
+  items: SelectedAgenda[];
+  onRemove: (id: number) => void;
+  lantai: string;
+}
+
+export default function SelectedAgendaList({ items, onRemove, lantai }: SelectedAgendaListProps) {
+  return (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 rounded-lg bg-emerald-50 border border-emerald-200">
+            <CalendarCheck size={16} className="text-emerald-600" />
+          </div>
+          <div>
+            <h3 className={`text-sm font-semibold text-gray-800 ${mona_sans.className}`}>
+              Agenda Terpilih
+            </h3>
+            <p className={`text-xs text-gray-400 ${noto_sans.className}`}>
+              Ditampilkan di dashboard
+            </p>
+          </div>
+          {/* <div className="flex items-center gap-2">
+            <MonitorDot size={14} className="text-gray-400" />
+            <span className={`text-xs text-gray-500 ${noto_sans.className}`}>
+              {items.length} agenda ditampilkan di dashboard {lantai}
+            </span>
+          </div> */}
+        </div>
+        {items.length > 0 && (
+          <span className={`inline-flex items-center justify-center min-w-6 h-6 px-2 text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 rounded-full ${suse.className}`}>
+            {items.length}
+          </span>
+        )}
+      </div>
+
+      {/* List */}
+      <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
+        {items.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full py-12 opacity-70">
+            <div className="p-4 rounded-2xl bg-gray-50 border border-dashed border-gray-200 mb-4">
+              <CalendarX2 size={32} className="text-gray-300" />
+            </div>
+            <p className={`text-sm font-medium text-gray-400 mb-1 ${mona_sans.className}`}>
+              Belum ada agenda terpilih
+            </p>
+            <p className={`text-xs text-gray-350 text-center max-w-56 ${noto_sans.className}`}>
+              Pilih agenda dari panel sebelah kanan untuk ditampilkan di dashboard {lantai}.
+            </p>
+          </div>
+        ) : (
+          items.map((item, index) => {
+            const date = item.waktu instanceof Date ? item.waktu : new Date(item.waktu);
+            return (
+              <div
+                key={item.id}
+                className="group relative flex items-start gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-emerald-200 transition-all duration-200 ease-out animate-[slideInLeft_0.3s_ease-out]"
+                style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
+              >
+                {/* Number badge */}
+                <div className={`shrink-0 flex items-center justify-center w-7 h-7 mt-0.5 rounded-lg bg-linear-to-br from-emerald-400 to-teal-500 text-white text-xs font-bold shadow-sm ${suse.className}`}>
+                  {index + 1}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-semibold text-gray-800 truncate ${mona_sans.className}`}>
+                    {item.nama}
+                  </p>
+                  {item.deskripsi && (
+                    <p className={`text-xs text-gray-400 truncate mt-0.5 ${noto_sans.className}`}>
+                      {item.deskripsi}
+                    </p>
+                  )}
+                  <p className={`text-[11px] text-gray-400 mt-1 ${suse.className}`}>
+                    {date.toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+
+                {/* Remove button */}
+                <button
+                  onClick={() => onRemove(item.id)}
+                  className="shrink-0 p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all duration-150 cursor-pointer"
+                  title="Hapus dari dashboard"
+                >
+                  <Trash2 size={14} strokeWidth={2} />
+                </button>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Footer info */}
+      {items.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <p className={`text-[11px] text-gray-400 text-center ${noto_sans.className}`}>
+            Agenda akan tetap tampil hingga dihapus secara manual.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

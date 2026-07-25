@@ -11,7 +11,6 @@ import { Card, Button as ButtonHero } from "@heroui/react";
 import { KebabHorizontalIcon } from '@primer/octicons-react';
 import { Carousel, DatePicker, Input, type GetProps } from 'antd'
 import { Table, DataTable, Dialog } from '@primer/react/experimental';
-import { ActionList, ActionMenu, Button, IconButton, Text } from '@primer/react';
 import { Calendar1, CalendarX, ClipboardList, ListPlus, Menu } from "lucide-react";
 import { lora, mona_sans, noto_sans, nunito, roboto, shantell_sans, suse } from "@/lib/font";
 import TableAgenda from "@/components/manage_agenda/tabel";

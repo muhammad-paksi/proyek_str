@@ -12,10 +12,18 @@ export async function proxy(request: NextRequest) {
 
   // Jika path TEPAT HANYA '/dasbor' atau '/dasbor/'
   if (trailingPaths[1] === 'dasbor') {
-    const lantai = trailingPaths[2];
-    if (lantai !== "lantai_6" && lantai !== "lantai_7" && lantai !== "lantai_8"){
-      // Redirect ke /dasbor/bla
-      return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
+    if (trailingPaths[2] === 'manage'){
+      const lantai = trailingPaths[3];
+      if (lantai !== "lantai_6" && lantai !== "lantai_7" && lantai !== "lantai_8"){
+        // Redirect ke /dasbor/manage/lantai_6
+        return NextResponse.redirect(new URL('/dasbor/manage/lantai_6', request.url));
+      }
+    } else {
+      const lantai = trailingPaths[2];
+      if (lantai !== "lantai_6" && lantai !== "lantai_7" && lantai !== "lantai_8"){
+        // Redirect ke /dasbor/bla
+        return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
+      }
     }
   }
 
