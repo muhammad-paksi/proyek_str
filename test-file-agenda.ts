@@ -1,1 +1,0 @@
-import { db } from './src/database/conn'; import { fileAgenda } from './src/database/schemas/jadwal.schema'; async function run() { const res = await db.select().from(fileAgenda); console.log(JSON.stringify(res, null, 2)); process.exit(0); } run();
