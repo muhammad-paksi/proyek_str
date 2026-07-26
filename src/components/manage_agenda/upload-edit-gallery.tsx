@@ -89,10 +89,11 @@ export default function UploadEditGallery({
   const uploadProps: UploadProps = {
     name: 'file',
     multiple: true,
-    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
     accept: format,
     listType: 'picture-card',
     fileList: fileList,
+    // Prevent auto-upload — parent handles upload on submit
+    beforeUpload: () => false,
     onChange: handleChange,
     onRemove: handleRemove,
     onPreview: handlePreview,

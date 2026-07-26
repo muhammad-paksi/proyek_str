@@ -1,72 +1,42 @@
 "use client"
 
-import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { DatePicker } from "antd";
-import { useRipple } from 'use-ripple-hook';
 import { useQuery } from "@tanstack/react-query";
-import { HugeiconsIcon } from '@hugeicons/react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
-import { OneSquareIcon, TwoSquareIcon } from '@hugeicons/core-free-icons'
-import { Button, FormControl, Heading, Text, Textarea, TextInput, Timeline } from '@primer/react';
-import { google_sans_flex, lora, mona_sans, noto_sans, nunito, shantell_sans, suse } from "@/lib/font";
+import { FormControl, Text, Timeline } from '@primer/react';
+import { google_sans_flex, lora, mona_sans, noto_sans } from "@/lib/font";
+import { getAgendaDetail } from "@/server/agenda";
 import 'react-photo-view/dist/react-photo-view.css';
 
-// Import Day.js library and its matching locale
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 
-// Activate the Day.js locale globally
 dayjs.locale('id');
 
 export default function Page() {
   const { id } = useParams();
 
-  const [rippleOnSubmit, eventOnSubmit] = useRipple({ color: "rgba(0, 0, 0, 0.2)" });
-  const [isLoading, setIsLoading] = useState(false);
-
   const {
     data: agendaDetail,
-    isLoading: areAgendaLoading, // Check if data is being fetched for 1st time (initial loading)
-    isFetching: areAgendaFetching,
-    isSuccess: isAgendaSuccess,
-    isError: isAgendaError,
+    isLoading: isDetailLoading,
   } = useQuery({
     queryKey: ["manage-agenda", id],
-    /* Below is commented because the default value is already undefined */
-    // initialData: undefined,
     refetchOnMount: true,
     queryFn: async () => {
-      let data: AgendaDetailType = {
-        id: 1,
-        nama: "Seminar proposal",
-        waktu: "23 Januari 2026",
-        imageList: [
-          {
-            id: 1,
-            url: "/agenda_view_example/the-falcon-9-rocket-failed-to-land-at-sea.jpg",
-          },
-          {
-            id: 2,
-            url: "/agenda_view_example/693620562_966708326124323_631974499786665596_n.jpg",
-          },
-          {
-            id: 3,
-            url: "/agenda_view_example/starship_carousel3_card1_m.jpg",
-          },
-          {
-            id: 4,
-            url: "/agenda_view_example/Science_spacex_1227204520.jpg",
-          },
-          {
-            id: 5,
-            url: "/agenda_view_example/crew1-docking.jpg",
-          }
-        ],
-      };
+      const result = await getAgendaDetail({ id: Number(id) });
+      if (!result?.data) return null;
 
-      return data;
+      const data = result.data;
+      return {
+        id: data.id,
+        nama: data.nama ?? '',
+        waktu: data.waktu instanceof Date
+          ? dayjs(data.waktu).format("DD MMMM YYYY")
+          : dayjs(String(data.waktu)).format("DD MMMM YYYY"),
+        imageList: data.imageList,
+        deskripsi: data.deskripsi ?? undefined,
+      };
     }
   });
 
@@ -81,9 +51,6 @@ export default function Page() {
             <Text size="medium" weight="normal" className="block text-neutral-500">
               Berikut adalah informasi mengenai agenda yang ingin Anda lihat.&#10;
             </Text>
-            {/* <Text size="small" weight="normal" className="text-neutral-500">
-              <span className="text-red-500">*</span> wajib diisi
-            </Text> */}
           </div>
 
           {/* === Form Tambah Poster ==== */}
@@ -105,7 +72,6 @@ export default function Page() {
                   <FormControl.Label
                     required
                     requiredText=""
-                  // className="mb-1 w-fit block text-sm font-semibold text-gray-900 cursor-pointer"
                   >
                     <Text className={`text-black font-medium`}>Deskripsi</Text>
                   </FormControl.Label>
@@ -156,7 +122,7 @@ export default function Page() {
           </Timeline>
 
           <Link
-            href={`/manage_agenda/edit/${agendaDetail?.id}`}
+            href={`/manage_agenda/${agendaDetail?.id}/edit`}
             className="mt-2 max-w-xs group flex items-center gap-3 rounded-lg border border-blue-100 bg-linear-to-r from-blue-50 to-white px-4 py-3 no-underline transition-all duration-200 hover:border-blue-300 hover:shadow-md hover:from-blue-100 hover:to-blue-50"
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white shadow-sm transition-transform duration-200 group-hover:scale-110">
@@ -176,12 +142,4 @@ export default function Page() {
       </main>
     </>
   )
-}
-
-type AgendaDetailType = {
-  id: number;
-  nama: string;
-  waktu: string;
-  imageList: Array<{ id: number; url: string }>;
-  deskripsi?: string;
 }

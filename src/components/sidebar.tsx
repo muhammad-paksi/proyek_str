@@ -72,6 +72,12 @@ export default function SideBar({
                 Dashboard
               </span>
             </NavMenuWrapper>
+            <NavMenuWrapper href="/dasbor/manage/lantai_6">
+              <LibraryBig className="w-4" />
+              <span className="text-sm font-normal group-hover:underline">
+                Manage dashboard
+              </span>
+            </NavMenuWrapper>
             <NavMenuWrapper href="/manage_agenda">
               <CalendarFold className="w-4" />
               <span className="text-sm font-normal group-hover:underline">

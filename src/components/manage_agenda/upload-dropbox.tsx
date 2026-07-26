@@ -5,58 +5,45 @@ import { message, Upload } from 'antd';
 
 const { Dragger } = Upload;
 
-export default function UploadDropbox({ format }: { format?: string }) {
+type UploadDropboxProps = {
+  format?: string;
+  onFileListChange?: (fileList: UploadFile[]) => void;
+};
+
+export default function UploadDropbox({ format, onFileListChange }: UploadDropboxProps) {
   const [messageApi, contextHolder] = message.useMessage();
-  
-  // 1. Buat state untuk memantau file yang ada di komponen
-  // const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const props: UploadProps = {
     name: 'file',
     multiple: true,
-    action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
     accept: format,
-
-    // 2. Hubungkan komponen dengan state local
-    // fileList: fileList,
-
+    listType: 'picture',
+    fileList: fileList,
+    // Prevent auto-upload — files will be uploaded by the parent on submit
+    beforeUpload: (file) => {
+      return false;
+    },
     onChange(info) {
-      const { status } = info.file;
-      // Batasi hanya menyimpan 1 file terakhir (karena kebutuhan form Anda hanya 1 berkas)
-      // setFileList(info.fileList);
-      
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        messageApi.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        messageApi.error(`${info.file.name} file upload failed.`);
-      }
+      setFileList(info.fileList);
+      onFileListChange?.(info.fileList);
     },
-    onDrop(e) {
-      console.log('Dropped files', e.dataTransfer.files);
+    onRemove(file) {
+      setFileList((prev) => prev.filter((f) => f.uid !== file.uid));
     },
-    onRemove() {
-      // setFileList([]);
-    }
   };
 
   return (
     <>
       {contextHolder}
-      <Dragger {...props} listType="picture" pastable>
-        {/* {fileList.length === 0 && ( */}
-          <>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">Klik atau seret file ke sini untuk mengunggah</p>
-            <p className="italic ant-upload-hint">
-              Anda bisa memilih beberapa gambar sekaligus
-            </p>
-          </>
-        {/* )} */}
+      <Dragger {...props} pastable>
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined />
+        </p>
+        <p className="ant-upload-text">Klik atau seret file ke sini untuk mengunggah</p>
+        <p className="italic ant-upload-hint">
+          Anda bisa memilih beberapa gambar sekaligus
+        </p>
       </Dragger>
     </>
   );

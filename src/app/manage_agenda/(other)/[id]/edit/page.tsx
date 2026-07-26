@@ -3,76 +3,91 @@
 import { useState } from "react";
 import { DatePicker } from "antd";
 import { useParams, useRouter } from "next/navigation";
-import { useRipple } from 'use-ripple-hook';
-import { useQuery } from "@tanstack/react-query";
-import { HugeiconsIcon } from '@hugeicons/react';
-import { OneSquareIcon, TwoSquareIcon } from '@hugeicons/core-free-icons'
-import { Button, FormControl, Heading, Text, Textarea, TextInput, Timeline } from '@primer/react';
-import { lora, nunito, shantell_sans, suse } from "@/lib/font";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, FormControl, Text, TextInput, Timeline } from '@primer/react';
+import { lora } from "@/lib/font";
 import UploadEditGallery from "@/components/manage_agenda/upload-edit-gallery";
-// Import Day.js library and its matching locale
+import { getAgendaDetail, updateAgenda, uploadAgendaFiles } from "@/server/agenda";
 import dayjs, { type Dayjs } from 'dayjs';
 import 'dayjs/locale/id';
 import { Plus, Trash } from "lucide-react";
 
-// Activate the Day.js locale globally
 dayjs.locale('id');
 
 export default function Page() {
   const { id } = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [nameInput, setNameInput] = useState<string>('');
   const [dateInput, setDateInput] = useState<string | null>(null);
-  const [imageList, setImageList] = useState<any[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
   const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
-
-  const [rippleOnSubmit, eventOnSubmit] = useRipple({ color: "rgba(0, 0, 0, 0.2)" });
   const [isLoading, setIsLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   const {
     data: agendaDetail,
-    isLoading: areAgendaLoading, // Check if data is being fetched for 1st time (initial loading)
-    isFetching: areAgendaFetching,
-    isSuccess: isAgendaSuccess,
-    isError: isAgendaError,
+    isLoading: isDetailLoading,
   } = useQuery({
     queryKey: ["manage-agenda", id],
-    /* Below is commented because the default value is already undefined */
-    // initialData: undefined,
     refetchOnMount: true,
     queryFn: async () => {
-      let data: AgendaDetailType = {
-        id: 1,
-        nama: "Seminar proposal",
-        waktu: "2026-08-03",
-        imageList: [
-          {
-            id: 1,
-            url: "/agenda_view_example/the-falcon-9-rocket-failed-to-land-at-sea.jpg",
-          },
-          {
-            id: 2,
-            url: "/agenda_view_example/693620562_966708326124323_631974499786665596_n.jpg",
-          },
-          {
-            id: 3,
-            url: "/agenda_view_example/starship_carousel3_card1_m.jpg",
-          },
-          {
-            id: 4,
-            url: "/agenda_view_example/Science_spacex_1227204520.jpg",
-          },
-          {
-            id: 5,
-            url: "/agenda_view_example/crew1-docking.jpg",
-          }
-        ],
-      };
+      const result = await getAgendaDetail({ id: Number(id) });
+      if (!result?.data) return null;
 
-      return data;
+      const data = result.data;
+      // Initialize form values once
+      if (!initialized) {
+        setNameInput(data.nama ?? '');
+        setDateInput(data.waktu instanceof Date
+          ? dayjs(data.waktu).format("YYYY-MM-DD")
+          : String(data.waktu)
+        );
+        setInitialized(true);
+      }
+
+      return {
+        id: data.id,
+        nama: data.nama ?? '',
+        waktu: data.waktu instanceof Date
+          ? dayjs(data.waktu).format("YYYY-MM-DD")
+          : String(data.waktu),
+        imageList: data.imageList,
+        deskripsi: data.deskripsi ?? undefined,
+      };
     }
   });
+
+  const handleSubmit = async () => {
+    if (!nameInput.trim() || !dateInput) return;
+    setIsLoading(true);
+    try {
+      await updateAgenda({
+        id: Number(id),
+        nama: nameInput.trim(),
+        waktu: dateInput,
+        deletedFileIds: deletedImageIds,
+      });
+
+      // Upload new files
+      if (newFiles.length > 0) {
+        const formData = new FormData();
+        formData.set("agendaId", String(id));
+        for (const file of newFiles) {
+          formData.append("files", file);
+        }
+        await uploadAgendaFiles(formData);
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["manage-agenda"] });
+      router.push(`/manage_agenda/${id}/view`);
+    } catch (e) {
+      console.error("Failed to update agenda:", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -100,11 +115,14 @@ export default function Page() {
                   <FormControl.Label
                     required
                     requiredText=""
-                  // className="mb-1 w-fit block text-sm font-semibold text-gray-900 cursor-pointer"
                   >
                     Nama agenda <span className="text-red-500">*</span>
                   </FormControl.Label>
-                  <TextInput defaultValue={agendaDetail?.nama} className={`w-full`} />
+                  <TextInput
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    className={`w-full`}
+                  />
                   <FormControl.Caption className="">
                     Misal:&nbsp;
                     <span className="font-medium text-purple-500">Yudisium semester ganjil</span>
@@ -121,18 +139,15 @@ export default function Page() {
                   <FormControl.Label
                     required
                     requiredText=""
-                  // className="mb-1 w-fit block text-sm font-semibold text-gray-900 cursor-pointer"
                   >
                     Tentukan tanggal <span className="text-red-500">*</span>
                   </FormControl.Label>
                   <DatePicker
                     format={"DD MMMM YYYY"}
-                    defaultValue={dayjs(agendaDetail?.waktu)}
+                    value={dateInput ? dayjs(dateInput) : undefined}
                     className={`w-[55%]`} placement="bottomLeft"
-                    onChange={(date: Dayjs | null, dateString: string | null) => {
-                      // console.log("Date (format: YYYY-MM-DD):", dayjs(date).format("YYYY-MM-DD"));
-                      // console.log("dateString:", dateString);
-                      // console.log(dayjs().format("YYYY-MM-DD"))
+                    onChange={(date: Dayjs | null) => {
+                      setDateInput(date ? dayjs(date).format("YYYY-MM-DD") : null);
                     }}
                   />
                   <FormControl.Caption className="">
@@ -147,21 +162,26 @@ export default function Page() {
               <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>3</Timeline.Badge>
               <Timeline.Body>
                 <FormControl aria-label="project-desc-field" className="flex-none">
-                  <FormControl.Label
-                  // className="mb-1 w-fit block text-sm font-semibold text-gray-900 cursor-pointer"
-                  >
+                  <FormControl.Label>
                     Berkas poster <span className="text-red-500">*</span>
                   </FormControl.Label>
                   <UploadEditGallery
                     existingImages={agendaDetail?.imageList}
                     format="image/*"
                     onDeleteExisting={(ids) => setDeletedImageIds(ids)}
+                    onFileListChange={(fileList) => {
+                      // Extract only newly added File objects (not existing server images)
+                      const newOnes = fileList
+                        .filter((f) => !f.uid.startsWith('existing-') && f.originFileObj)
+                        .map((f) => f.originFileObj as File);
+                      setNewFiles(newOnes);
+                    }}
                   />
                   <FormControl.Caption className="mt-3! w-full border-0">
                     Klik{" "}
                     <div className="inline-flex items-center align-middle">
                       <Trash size={14} strokeWidth={2} />
-                    </div> pada gambar untuk menghapus.
+                    </div>pada gambar untuk menghapus.
                     Klik{" "} 
                     <span className="inline-flex items-center align-middle">
                       <Plus size={14} strokeWidth={2} />
@@ -178,11 +198,10 @@ export default function Page() {
                 <Button 
                   variant="primary" 
                   className="bg-blue-500!"
-                  onClick={() => {
-                    router.push(`/manage_agenda/${id}/view`)
-                  }}
+                  onClick={handleSubmit}
+                  disabled={isLoading || !nameInput.trim() || !dateInput}
                 >
-                  Perbarui
+                  {isLoading ? 'Memperbarui...' : 'Perbarui'}
                 </Button>
               </Timeline.Body>
             </Timeline.Item>
@@ -191,12 +210,4 @@ export default function Page() {
       </main>
     </>
   )
-}
-
-type AgendaDetailType = {
-  id: number;
-  nama: string;
-  waktu: string;
-  imageList: Array<{ id: number; url: string }>;
-  deskripsi?: string;
 }

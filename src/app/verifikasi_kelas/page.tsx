@@ -39,10 +39,10 @@ export default function Page() {
       <main className="w-screen h-[73vh] pl-10 pr-10 pt-7">
         <div className="mb-4">
           <h2 className={`mb-1 text-2xl font-semibold ${lora.className}`}>
-            Kelas saya
+            Halaman verifikasi
           </h2>
           <Text size="medium" weight="normal" className="block text-neutral-500">
-            Tambahkan pengguna yang akan diberikan akses khusus.&#10;
+            Verifikasi data pelaksanaan perkuliahan untuk setiap kelas&#10;
           </Text>
         </div>
         <div className="mb-3 flex gap-3 items-center">

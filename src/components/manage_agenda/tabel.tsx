@@ -10,6 +10,7 @@ import { Table, DataTable } from '@primer/react/experimental';
 import { ActionList, ActionMenu, IconButton, Text } from '@primer/react';
 import { CalendarX, ClipboardList, Eraser, ListPlus, Menu, Eye, Paperclip, PenLine } from "lucide-react";
 import { lora, mona_sans, noto_sans, shantell_sans, suse } from "@/lib/font";
+import { getAgendaList } from "@/server/agenda";
 
 export default function TableAgenda({ onSelectDelete }: { onSelectDelete: (id: any, nama: string, element: any) => void }) {
   const router = useRouter();
@@ -28,24 +29,15 @@ export default function TableAgenda({ onSelectDelete }: { onSelectDelete: (id: a
     // initialData: undefined,
     refetchOnMount: true,
     queryFn: async () => {
-      let data: AgendaRow[] = [{
-        id: 1,
-        nama: "Agenda 1",
-        imageNumber: 1,
-        waktu: new Date(),
-      }, {
-        id: 2,
-        nama: "Agenda 2",
-        imageNumber: 2,
-        waktu: new Date(),
-      }, {
-        id: 3,
-        nama: "Agenda 3",
-        imageNumber: 3,
-        waktu: new Date(),
-      }];
-
-      return data;
+      const result = await getAgendaList();
+      if (!result?.data) return [];
+      return result.data.map((row) => ({
+        id: row.id,
+        nama: row.nama ?? "Tanpa nama",
+        deskripsi: row.deskripsi,
+        waktu: new Date(row.waktu),
+        imageNumber: row.fileCount ?? 0,
+      }));
     }
   });
 
@@ -129,7 +121,7 @@ export default function TableAgenda({ onSelectDelete }: { onSelectDelete: (id: a
                   return row.imageNumber ? (
                     <div className="flex items-center gap-2">
                       <Paperclip size={13} strokeWidth={1} />
-                      <Link href={`/manage_agenda/edit/${row.id}`} className={`text-blue-500 text-sm ${mona_sans.className}`}>
+                      <Link href={`/manage_agenda/${row.id}/view`} className={`text-blue-500 text-sm ${mona_sans.className}`}>
                         {row.imageNumber} &nbsp;gambar
                       </Link>
                     </div>
