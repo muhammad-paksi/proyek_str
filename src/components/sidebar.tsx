@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { CalendarFold, LibraryBig, ListTodo, Users, X, LogOut, Building2, Feather, LampWallUp, ScrollText } from "lucide-react";
+import { CalendarFold, LibraryBig, ListTodo, Users, X, LogOut, LogIn, Building2, Feather, LampWallUp, ScrollText } from "lucide-react";
 import Tooltip from "@mui/material/Tooltip";
 import { suse } from "@/lib/font";
 import BaseUIScrollWrapper from "@/components/wrapper/baseui_scroll_wrapper";
@@ -137,17 +137,26 @@ export default function SideBar({
               </NavMenuWrapper>
             )}
 
-            <button
-              type="button"
-              onClick={async () => {
-                await signOut();
-                router.replace("/akun/masuk");
-              }}
-              className="mt-2 w-full flex items-center gap-2.5 px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors text-sm font-medium cursor-pointer"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Keluar</span>
-            </button>
+            {role ? (
+              <button
+                type="button"
+                onClick={async () => {
+                  await signOut();
+                  router.replace("/akun/masuk");
+                }}
+                className="mt-2 w-full flex items-center gap-2.5 px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors text-sm font-medium cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Keluar</span>
+              </button>
+            ) : (
+              <NavMenuWrapper href="/akun/masuk">
+                <LogIn className="w-4" />
+                <span className="text-sm font-normal group-hover:underline">
+                  Masuk
+                </span>
+              </NavMenuWrapper>
+            )}
           </nav>
         </div>
 

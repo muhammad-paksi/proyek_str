@@ -20,9 +20,14 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // If user is already logged in and visiting auth pages or root page, redirect to /dasbor/lantai_6
+  // Redirect root page to /dasbor/lantai_6 for everyone
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
+  }
+
+  // If user is already logged in and visiting auth pages, redirect to /dasbor/lantai_6
   if (payload) {
-    if (pathname.startsWith('/akun/') || pathname === '/') {
+    if (pathname.startsWith('/akun/')) {
       return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
     }
   }
