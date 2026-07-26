@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "ta",
+      "name": "proyek-str",
       "dependencies": {
         "@atlaskit/dropdown-menu": "^17.1.0",
         "@atlaskit/tokens": "^15.1.0",
