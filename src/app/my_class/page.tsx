@@ -21,6 +21,7 @@ const { Search } = Input;
 const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
 export default function Page() {
+  const [selectedDate, setSelectedDate] = useState<string>(() => dayjs().format("YYYY-MM-DD"));
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: number;
@@ -42,14 +43,24 @@ export default function Page() {
             Kelas saya
           </h2>
           <Text size="medium" weight="normal" className="block text-neutral-500">
-            Tambahkan pengguna yang akan diberikan akses khusus.&#10;
+            Daftar pelaksanaan jadwal perkuliahan kelas Anda.&#10;
           </Text>
         </div>
         <div className="mb-3 flex gap-3 items-center">
-          <DatePicker format={"DD MMM YYYY"} placeholder="Pilih Tanggal" className="w-xs" suffixIcon={<Calendar1 className="text-blue-400" size={16} strokeWidth={2} />} />
+          <DatePicker
+            value={selectedDate ? dayjs(selectedDate) : undefined}
+            format={"DD MMM YYYY"}
+            placeholder="Pilih Tanggal"
+            className="w-xs"
+            suffixIcon={<Calendar1 className="text-blue-400" size={16} strokeWidth={2} />}
+            onChange={(date) => {
+              setSelectedDate(date ? date.format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD"));
+            }}
+          />
         </div>
 
         <TableKelas
+          selectedDate={selectedDate}
           onSelectDelete={(id, username, element) => {
             setDeleteTarget({ id, username, triggerEl: element });
             setIsDeleteOpen(true);

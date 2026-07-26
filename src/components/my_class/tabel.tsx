@@ -8,59 +8,31 @@ import { useQuery } from "@tanstack/react-query";
 import { Table, DataTable } from '@primer/react/experimental';
 import { google_sans, lora, mona_sans, noto_sans, noto_serif, roboto, roboto_flex, shantell_sans, suse } from "@/lib/font";
 
-export default function TableKelas({ onSelectDelete }: { onSelectDelete: (id: any, username: string, element: any) => void }) {
+import { getMyClassPelaksanaan } from "@/server/actions/my-class";
+
+export default function TableKelas({
+  selectedDate,
+  onSelectDelete,
+}: {
+  selectedDate?: string;
+  onSelectDelete?: (id: any, username: string, element: any) => void;
+}) {
   const router = useRouter();
   const rippleOptions = { color: "rgba(0, 0, 0, 0.2)" };
   const [rippleOnAdd, eventOnAdd] = useRipple(rippleOptions);
 
   const {
     data: kelasList,
-    isLoading: areKelasLoading, // Check if data is being fetched for 1st time (initial loading)
+    isLoading: areKelasLoading,
     isFetching: areKelasFetching,
     isSuccess: isKelasSuccess,
     isError: isKelasError,
   } = useQuery({
-    queryKey: ["manage-users"],
-    /* Below is commented because the default value is already undefined */
-    // initialData: undefined,
+    queryKey: ["my-class-pelaksanaan", selectedDate],
     refetchOnMount: true,
     queryFn: async () => {
-      let data: {
-        id: number;
-        mata_kuliah: string;
-        jam_pelajaran: string;
-        ruang: string;
-        status?: number;
-        updated_at?: string;
-      }[] = [
-          {
-            id: 0,
-            mata_kuliah: "Matematika",
-            jam_pelajaran: "08.00-10.00",
-            ruang: "A101"
-          },
-          {
-            id: 1,
-            mata_kuliah: "Fisika",
-            jam_pelajaran: "10.00-12.00",
-            ruang: "A102",
-            status: 1
-          },
-          {
-            id: 2,
-            mata_kuliah: "Purbaya",
-            jam_pelajaran: "12.00-14.00",
-            ruang: "A103"
-          },
-          {
-            id: 3,
-            mata_kuliah: "Kalkulus",
-            jam_pelajaran: "14.00-16.00",
-            ruang: "A104"
-          }];
-
-      return data;
-    }
+      return await getMyClassPelaksanaan(selectedDate);
+    },
   });
 
   const numberedUsers = (kelasList ?? []).map((item, index) => ({

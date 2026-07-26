@@ -27,49 +27,50 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Routes that are public (do not require login)
-  if (
+  // Check if route is public
+  const isDasborManage = pathname.startsWith('/dasbor/manage');
+  const isDasborPublic = pathname.startsWith('/dasbor') && !isDasborManage;
+
+  const isPublic =
     pathname.startsWith('/akun/') ||
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/_next/') ||
     pathname === '/' ||
-    pathname.includes('.')
-  ) {
-    return NextResponse.next();
-  }
+    pathname.includes('.') ||
+    isDasborPublic;
 
-  if (!payload) {
+  // Unauthenticated users accessing protected routes -> redirect to /akun/masuk
+  if (!payload && !isPublic) {
     return NextResponse.redirect(new URL('/akun/masuk', request.url));
   }
 
-  const role = payload.role as string;
+  // RBAC Authorization Check for authenticated users
+  if (payload) {
+    const role = payload.role as string;
 
-  // RBAC Authorization Check
-  if (role !== 'super_admin') {
-    const isDasborManage = pathname.startsWith('/dasbor/manage');
-    const isDasbor = pathname.startsWith('/dasbor');
-
-    if (role === 'mahasiswa') {
-      if (isDasborManage || (!isDasbor && !pathname.startsWith('/my_class'))) {
-        return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
-      }
-    } else if (role === 'staf') {
-      if (!isDasbor && !pathname.startsWith('/manage_agenda')) {
-        return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
-      }
-    } else if (role === 'admin' || role === 'admin_jurusan') {
-      if (
-        isDasborManage ||
-        (!isDasbor &&
-          !pathname.startsWith('/verifikasi_kelas') &&
-          !pathname.startsWith('/manage_users'))
-      ) {
-        return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
+    if (role !== 'super_admin') {
+      if (role === 'mahasiswa') {
+        if (isDasborManage || (!pathname.startsWith('/dasbor') && !pathname.startsWith('/my_class'))) {
+          return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
+        }
+      } else if (role === 'staf') {
+        if (!pathname.startsWith('/dasbor') && !pathname.startsWith('/manage_agenda')) {
+          return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
+        }
+      } else if (role === 'admin' || role === 'admin_jurusan') {
+        if (
+          isDasborManage ||
+          (!pathname.startsWith('/dasbor') &&
+            !pathname.startsWith('/verifikasi_kelas') &&
+            !pathname.startsWith('/manage_users'))
+        ) {
+          return NextResponse.redirect(new URL('/dasbor/lantai_6', request.url));
+        }
       }
     }
   }
 
-  // Floor redirection logic for /dasbor routes
+  // Floor redirection logic for /dasbor routes (both public & protected)
   const trailingPaths = pathname.split('/');
   if (trailingPaths[1] === 'dasbor') {
     if (trailingPaths[2] === 'manage') {
