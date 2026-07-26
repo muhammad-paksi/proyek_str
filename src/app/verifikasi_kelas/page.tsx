@@ -4,9 +4,11 @@ import { useMemo, useRef, useState } from "react";
 import { Text } from '@primer/react';
 import { Calendar1 } from "lucide-react";
 import { Dialog } from '@primer/react/experimental';
-import { DatePicker, Input, type GetProps } from 'antd';
+import { DatePicker, Input, Select, type GetProps } from 'antd';
+import { useQuery } from "@tanstack/react-query";
 import TableVerifikasi from "@/components/verifikasi_kelas/tabel";
 import { lora, mona_sans, noto_sans, nunito, roboto, shantell_sans, suse } from "@/lib/font";
+import { getKelasList } from "@/server/user";
 
 // Import Day.js library and its matching locale
 import dayjs from 'dayjs';
@@ -29,6 +31,17 @@ export default function Page() {
   }>({ id: 0, username: "", triggerEl: null });
   // const returnFocusRef = useRef<HTMLButtonElement>(null);
 
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedKelas, setSelectedKelas] = useState<string | null>(null);
+
+  const { data: kelasList = [] } = useQuery({
+    queryKey: ["kelasList"],
+    queryFn: async () => {
+      const res = await getKelasList();
+      return res?.data ?? [];
+    }
+  });
+
   const handleClose = () => {
     setDeleteTarget({ id: -1, username: "", triggerEl: null });
     setIsDeleteOpen(false);
@@ -46,10 +59,29 @@ export default function Page() {
           </Text>
         </div>
         <div className="mb-3 flex gap-3 items-center">
-          <DatePicker format={"DD MMM YYYY"} placeholder="Pilih Tanggal" className="w-xs" suffixIcon={<Calendar1 className="text-blue-400" size={16} strokeWidth={2} />} />
+          <DatePicker 
+            format={"DD MMM YYYY"} 
+            placeholder="Pilih Tanggal" 
+            className="w-xs" 
+            value={selectedDate}
+            onChange={(date) => {
+              if (date) setSelectedDate(date);
+            }}
+            suffixIcon={<Calendar1 className="text-blue-400" size={16} strokeWidth={2} />} 
+          />
+          <Select
+            placeholder="Semua Kelas"
+            style={{ width: 200 }}
+            onChange={(val) => setSelectedKelas(val)}
+            value={selectedKelas}
+            options={kelasList}
+            allowClear
+          />
         </div>
 
         <TableVerifikasi
+          date={selectedDate.toDate()}
+          kodeKelas={selectedKelas}
           onSelectDelete={(id, username, element) => {
             setDeleteTarget({ id, username, triggerEl: element });
             setIsDeleteOpen(true);
