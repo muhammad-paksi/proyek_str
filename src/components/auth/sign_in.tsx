@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import validate from "validator";
 import Tooltip from "@mui/material/Tooltip";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -23,7 +22,7 @@ import { google_sans_flex, nunito, google_sans, suse } from "@/lib/font";
 import { signIn } from "@/server/auth/signin";
 
 type ErrorMessage = {
-  email?: string;
+  username?: string;
   password?: string;
   general?: string;
 };
@@ -31,12 +30,11 @@ const rippleOptions = {color: "rgba(0, 0, 0, 0.2)"}
 
 export default function SignIn() {
   const router = useRouter();
-  // const { toast } = useToast();
 
   const [rippleOnSignin, eventOnSignin] = useRipple();
   const [rippleOnGoogle, eventOnGoogle] = useRipple(rippleOptions);
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,31 +50,31 @@ export default function SignIn() {
         className={`w-full h-fit flex flex-col gap-y-3 border-0 ${nunito.className}`}
         autoComplete="off"
       >
-        <TextField isInvalid={!!errorMessage.email}>
+        <TextField isInvalid={!!errorMessage.username}>
           <Label
-            htmlFor="email"
+            htmlFor="username"
             className="w-fit font-semibold"
             onClick={(e) => {
               // Agar field tidak langsung aktif ketika label diklik
               // e.preventDefault();
             }}
           >
-            Surel
+            Username
           </Label>
           <Input
-            id="email"
-            type="email"
+            id="username"
+            type="text"
             variant="secondary"
-            value={email}
-            placeholder="Email"
+            value={username}
+            placeholder="Username"
             onChange={(e) => {
-              setEmail(e.target.value);
+              setUsername(e.target.value);
             }}
           />
-          {errorMessage.email ? (
-            <FieldError>{errorMessage.email}</FieldError>
+          {errorMessage.username ? (
+            <FieldError>{errorMessage.username}</FieldError>
           ) : (
-            <Description className="ml-2">Anda@contoh.com</Description>
+            <Description className="ml-2">contoh_username</Description>
           )}
         </TextField>
         <TextField isInvalid={!!errorMessage.password}>
@@ -156,12 +154,12 @@ export default function SignIn() {
           onPress={async () => {
             setIsLoading(true);
             
-            const user = await handleSubmit({ router, email, password, rememberMe, setEmail, setErrorMessage });
+            const user = await handleSubmit({ router, username, password, rememberMe, setUsername, setErrorMessage });
             setTimeout(() => {
               setIsLoading(false);
             }, 1000);
 
-            if (user) router.replace("/");
+            if (user) router.replace("/dasbor");
           }}
           isPending={isLoading}
           className={`w-full h-fit py-1.5 px-3 rounded-lg
@@ -229,43 +227,35 @@ export default function SignIn() {
   );
 }
 
-const handleSubmit = async ({ router, email, password, rememberMe, setEmail, setErrorMessage }
+const handleSubmit = async ({ router, username, password, rememberMe, setUsername, setErrorMessage }
 : {
   router: ReturnType<typeof useRouter>;
-  email: string;
+  username: string;
   password: string;
   rememberMe: boolean;
-  setEmail: (v: string) => void;
+  setUsername: (v: string) => void;
   setErrorMessage: (v: ErrorMessage) => void;
 }): Promise<any | null> => {
   setErrorMessage({});
 
-  const trimmedEmail = email.trim();
-  setEmail(trimmedEmail); // In case email tidak valid, maka email di form sudah tanpa spasi.
+  const trimmedUsername = username.trim();
+  setUsername(trimmedUsername); // In case username tidak valid, maka username di form sudah tanpa spasi.
 
-  if (!trimmedEmail || !password) {
-    setErrorMessage({ general: "Email and password cannot be empty" });
+  if (!trimmedUsername || !password) {
+    setErrorMessage({ general: "Username and password cannot be empty" });
     return;
   }
 
   const errors: ErrorMessage = {};
-  if (!validate.isEmail(trimmedEmail)) errors.email = "Invalid email address";
-  if (!validate.isLength(password, { min: 6 }))
-    errors.password = "Password must be at least 6 characters long";
+  if (!trimmedUsername) errors.username = "Username required";
+  if (!password) errors.password = "Password required";
 
   if (Object.keys(errors).length) {
     setErrorMessage(errors);
     return;
   }
 
-  // const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/signin`, {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ email: trimmedEmail, password, remember_me: rememberMe }),
-  //   credentials: "include",
-  // });
-  const res = await signIn({email: trimmedEmail, password, rememberMe});
+  const res = await signIn({username: trimmedUsername, password, rememberMe});
   
-  return res.data?.user ? res.data.user : null;
-  // if (res.data?.ok) router.replace("/kanban");
+  return res?.data?.user ? res.data.user : null;
 };

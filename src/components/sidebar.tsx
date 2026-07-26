@@ -1,12 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarFold, LibraryBig, ListTodo, Users, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { CalendarFold, LibraryBig, ListTodo, Users, X, LogOut, Building2, Feather, LampWallUp, ScrollText } from "lucide-react";
 import Tooltip from "@mui/material/Tooltip";
-import { Building2, Feather, LampWallUp, ScrollText } from "lucide-react";
 import { suse } from "@/lib/font";
 import BaseUIScrollWrapper from "@/components/wrapper/baseui_scroll_wrapper";
 import NavMenuWrapper from "@/components/wrapper/nav_menu_wrapper";
+import { signOut } from "@/server/auth/signout";
+import { getUserRole } from "@/server/auth/get-role";
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -30,6 +33,17 @@ export default function SideBar({
   isSidebarOpen?: boolean;
   setIsSidebarOpen?: (open: boolean) => void;
 }) {
+  const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    getUserRole().then((userRole) => setRole(userRole));
+  }, []);
+
+  const isSuperAdmin = role === 'super_admin';
+  const isStaf = role === 'staf' || isSuperAdmin;
+  const isMahasiswa = role === 'mahasiswa' || isSuperAdmin;
+  const isAdminJurusan = role === 'admin' || role === 'admin_jurusan' || isSuperAdmin;
 
   return (
     <>
@@ -65,43 +79,75 @@ export default function SideBar({
             className="mt-0 md:flex md:flex-col gap-1 px-2 border-0"
             aria-label="Main navigation"
           >
-            {/* Kanban boards */}
+            {/* Dashboard: dapat diakses semua role */}
             <NavMenuWrapper href="/dasbor">
               <Building2 className="w-4" />
               <span className="text-sm font-normal group-hover:underline">
                 Dashboard
               </span>
             </NavMenuWrapper>
-            <NavMenuWrapper href="/dasbor/manage/lantai_6">
-              <LibraryBig className="w-4" />
-              <span className="text-sm font-normal group-hover:underline">
-                Manage dashboard
-              </span>
-            </NavMenuWrapper>
-            <NavMenuWrapper href="/manage_agenda">
-              <CalendarFold className="w-4" />
-              <span className="text-sm font-normal group-hover:underline">
-                Manage agenda
-              </span>
-            </NavMenuWrapper>
-            <NavMenuWrapper href="/my_class">
-              <LibraryBig className="w-4" />
-              <span className="text-sm font-normal group-hover:underline">
-                Kelas saya
-              </span>
-            </NavMenuWrapper>
-            <NavMenuWrapper href="/verifikasi_kelas">
-              <ListTodo className="w-4" />
-              <span className="text-sm font-normal group-hover:underline">
-                Verifikasi kelas
-              </span>
-            </NavMenuWrapper>
-            <NavMenuWrapper href="/manage_users">
-              <Users className="w-4" />
-              <span className="text-sm font-normal group-hover:underline">
-                Manage users
-              </span>
-            </NavMenuWrapper>
+
+            {/* Manage Dashboard: Staf & Super Admin */}
+            {isStaf && (
+              <NavMenuWrapper href="/dasbor/manage/lantai_6">
+                <LibraryBig className="w-4" />
+                <span className="text-sm font-normal group-hover:underline">
+                  Manage dashboard
+                </span>
+              </NavMenuWrapper>
+            )}
+
+            {/* Manage Agenda: Staf & Super Admin */}
+            {isStaf && (
+              <NavMenuWrapper href="/manage_agenda">
+                <CalendarFold className="w-4" />
+                <span className="text-sm font-normal group-hover:underline">
+                  Manage agenda
+                </span>
+              </NavMenuWrapper>
+            )}
+
+            {/* Kelas Saya: Mahasiswa & Super Admin */}
+            {isMahasiswa && (
+              <NavMenuWrapper href="/my_class">
+                <LibraryBig className="w-4" />
+                <span className="text-sm font-normal group-hover:underline">
+                  Kelas saya
+                </span>
+              </NavMenuWrapper>
+            )}
+
+            {/* Verifikasi Kelas: Admin Jurusan & Super Admin */}
+            {isAdminJurusan && (
+              <NavMenuWrapper href="/verifikasi_kelas">
+                <ListTodo className="w-4" />
+                <span className="text-sm font-normal group-hover:underline">
+                  Verifikasi kelas
+                </span>
+              </NavMenuWrapper>
+            )}
+
+            {/* Manage Users: Admin Jurusan & Super Admin */}
+            {isAdminJurusan && (
+              <NavMenuWrapper href="/manage_users">
+                <Users className="w-4" />
+                <span className="text-sm font-normal group-hover:underline">
+                  Manage users
+                </span>
+              </NavMenuWrapper>
+            )}
+
+            <button
+              type="button"
+              onClick={async () => {
+                await signOut();
+                router.replace("/akun/masuk");
+              }}
+              className="mt-2 w-full flex items-center gap-2.5 px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors text-sm font-medium cursor-pointer"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Keluar</span>
+            </button>
           </nav>
         </div>
 
