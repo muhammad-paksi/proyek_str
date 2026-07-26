@@ -42,7 +42,7 @@ export default function SideBar({
 
   const isSuperAdmin = role === 'super_admin';
   const isStaf = role === 'staf' || isSuperAdmin;
-  const isMahasiswa = role === 'mahasiswa' || isSuperAdmin;
+  const isMahasiswa = role === 'mahasiswa';
   const isAdminJurusan = role === 'admin' || role === 'admin_jurusan' || isSuperAdmin;
 
   return (
