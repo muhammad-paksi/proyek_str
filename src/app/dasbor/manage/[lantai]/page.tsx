@@ -2,13 +2,15 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Text } from "@primer/react";
 import { Dialog } from "@primer/react/experimental";
 import { Building2, CalendarCheck, Info, Layers, MonitorDot, Sparkles } from "lucide-react";
 import { lora, mona_sans, noto_sans, suse } from "@/lib/font";
 import SelectedAgendaList, { type SelectedAgenda } from "@/components/manage_dasbor/selected-agenda-list";
 import AgendaSelector, { type AvailableAgenda } from "@/components/manage_dasbor/agenda-selector";
+import { getAgendaList } from "@/server/agenda";
+import { getDasborAgendaList, saveDasborAgenda } from "@/server/dasbor";
 
 // Import Day.js library and its matching locale
 import dayjs from 'dayjs';
@@ -21,29 +23,57 @@ export default function Page() {
   let { lantai = "" } = useParams<{ lantai: string }>();
   lantai = lantai.replace(/_/g, " ");
 
+  const queryClient = useQueryClient();
+
+  // Format lantai for display and numeric values
+  const lantaiDisplay = lantai.replace(/\b\w/g, (c) => c.toUpperCase());
+  const lantaiNum = Number(lantai.replace(/\D/g, ""));
+
   // Query all agendas
   const {
     data: allAgendas,
-    isLoading,
+    isLoading: isLoadingAll,
   } = useQuery({
-    queryKey: ["manage-dasbor-agenda"],
+    queryKey: ["manage-agenda"],
     refetchOnMount: true,
     queryFn: async () => {
-      // Simulated network delay
-      await new Promise((r) => setTimeout(r, 600));
-      return ALL_AGENDAS;
+      const res = await getAgendaList();
+      return (res?.data ?? []).map(a => ({
+        ...a,
+        deskripsi: a.deskripsi,
+        nama: a.nama ?? "Tanpa Nama",
+      }));
     },
   });
 
+  // Query saved agenda IDs for this floor
+  const {
+    data: savedAgendaIds,
+    isLoading: isLoadingSaved,
+  } = useQuery({
+    queryKey: ["manage-dasbor-agenda", lantaiNum],
+    refetchOnMount: true,
+    queryFn: async () => {
+      const res = await getDasborAgendaList({ lantai: lantaiNum });
+      return res?.data ?? [];
+    },
+  });
+
+  const isLoading = isLoadingAll || isLoadingSaved;
+
   // Saved agenda IDs (persistent state across edits)
-  const [savedIds, setSavedIds] = useState<Set<number>>(
-    () => new Set(INITIAL_SELECTED[lantai] ?? [])
-  );
+  const [savedIds, setSavedIds] = useState<number[]>([]);
 
   // Selected agenda IDs (draft state)
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(
-    () => new Set(INITIAL_SELECTED[lantai] ?? [])
-  );
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  // Update local state when DB fetch completes
+  useMemo(() => {
+    if (savedAgendaIds) {
+      setSavedIds(savedAgendaIds);
+      setSelectedIds(savedAgendaIds);
+    }
+  }, [savedAgendaIds]);
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false);
@@ -56,40 +86,73 @@ export default function Page() {
     triggerEl: HTMLElement | null;
   }>({ open: false, type: "add", agenda: null, triggerEl: null });
 
-  // Derived lists
   const selectedAgendas: SelectedAgenda[] = useMemo(() => {
     if (!allAgendas) return [];
-    return allAgendas.filter((a) => selectedIds.has(a.id));
+    const result: SelectedAgenda[] = [];
+    for (const id of selectedIds) {
+      const a = allAgendas.find(item => item.id === id);
+      if (a) {
+        result.push({
+          id: a.id,
+          nama: a.nama ?? "Tanpa Nama",
+          deskripsi: a.deskripsi ?? null,
+          waktu: a.waktu,
+          fileCount: a.fileCount,
+        });
+      }
+    }
+    return result;
   }, [allAgendas, selectedIds]);
 
   const availableAgendas: AvailableAgenda[] = useMemo(() => {
     if (!allAgendas) return [];
-    return allAgendas.filter((a) => !selectedIds.has(a.id));
+    const idSet = new Set(selectedIds);
+    return allAgendas
+      .filter((a) => !idSet.has(a.id))
+      .map(a => ({
+        id: a.id,
+        nama: a.nama ?? "Tanpa Nama",
+        deskripsi: a.deskripsi ?? null,
+        waktu: a.waktu,
+        fileCount: a.fileCount,
+      }));
   }, [allAgendas, selectedIds]);
 
   // Handlers
   const handleEdit = useCallback(() => {
     setIsEditing(true);
-    setSelectedIds(new Set(savedIds));
+    setSelectedIds([...savedIds]);
   }, [savedIds]);
 
   const handleCancel = useCallback(() => {
     setIsEditing(false);
-    setSelectedIds(new Set(savedIds));
+    setSelectedIds([...savedIds]);
   }, [savedIds]);
 
-  const handleSave = useCallback(() => {
-    setIsEditing(false);
-    setSavedIds(new Set(selectedIds));
-    // Here you would typically make an API call to save the changes
-  }, [selectedIds]);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      await saveDasborAgenda({
+        lantai: lantaiNum,
+        agendaIds: selectedIds,
+      });
+      setSavedIds([...selectedIds]);
+      await queryClient.invalidateQueries({ queryKey: ["manage-dasbor-agenda", lantaiNum] });
+      setIsEditing(false);
+    } catch (e) {
+      console.error("Failed to save dashboard agendas:", e);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [selectedIds, lantaiNum, queryClient]);
 
   const handleSelect = useCallback((item: AvailableAgenda) => {
     if (!isEditing) return;
     setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.add(item.id);
-      return next;
+      if (prev.includes(item.id)) return prev;
+      return [...prev, item.id];
     });
   }, [isEditing]);
 
@@ -102,22 +165,36 @@ export default function Page() {
 
   const confirmRemove = useCallback(() => {
     if (confirmDialog.agenda) {
-      setSelectedIds((prev) => {
-        const next = new Set(prev);
-        next.delete(confirmDialog.agenda!.id);
-        return next;
-      });
+      setSelectedIds((prev) => prev.filter(id => id !== confirmDialog.agenda!.id));
     }
     setConfirmDialog({ open: false, type: "remove", agenda: null, triggerEl: null });
   }, [confirmDialog.agenda]);
+
+  const handleReorder = useCallback((id: number, direction: 'up' | 'down') => {
+    setSelectedIds((prev) => {
+      const idx = prev.indexOf(id);
+      if (idx < 0) return prev;
+      if (direction === 'up' && idx > 0) {
+        const next = [...prev];
+        next[idx] = next[idx - 1];
+        next[idx - 1] = id;
+        return next;
+      }
+      if (direction === 'down' && idx < prev.length - 1) {
+        const next = [...prev];
+        next[idx] = next[idx + 1];
+        next[idx + 1] = id;
+        return next;
+      }
+      return prev;
+    });
+  }, []);
 
   const handleCloseDialog = useCallback(() => {
     setConfirmDialog({ open: false, type: "remove", agenda: null, triggerEl: null });
   }, []);
 
-  // Format lantai for display
-  const lantaiDisplay = lantai.replace(/\b\w/g, (c) => c.toUpperCase());
-  const lantaiNum = lantai.replace(/\D/g, "");
+  // Floor logic handled above
 
   return (
     <>
@@ -155,9 +232,10 @@ export default function Page() {
                   </button>
                   <button
                     onClick={handleSave}
-                    className={`px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors ${mona_sans.className}`}
+                    disabled={isSaving}
+                    className={`px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] transition-colors disabled:opacity-50 ${mona_sans.className}`}
                   >
-                    Simpan
+                    {isSaving ? "Menyimpan..." : "Simpan"}
                   </button>
                 </>
               ) : (
@@ -190,6 +268,7 @@ export default function Page() {
             <SelectedAgendaList
               items={selectedAgendas}
               onRemove={handleRemove}
+              onReorder={handleReorder}
               lantai={lantai}
               readOnly={!isEditing}
             />
@@ -201,7 +280,7 @@ export default function Page() {
             <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-400 via-indigo-400 to-violet-400 rounded-t-2xl" />
             <AgendaSelector
               items={availableAgendas}
-              selectedIds={selectedIds}
+              selectedIds={new Set(selectedIds)}
               onSelect={handleSelect}
               isLoading={isLoading}
               readOnly={!isEditing}
@@ -258,62 +337,3 @@ export default function Page() {
     </>
   );
 }
-
-/** Dummy: agenda yang sudah terpilih per lantai */
-const INITIAL_SELECTED: Record<string, number[]> = {
-  "lantai 6": [1, 3],
-  "lantai 7": [2, 5],
-  "lantai 8": [4],
-};
-
-/** Dummy data: semua agenda yang ada di sistem */
-const ALL_AGENDAS: AvailableAgenda[] = [
-  {
-    id: 1,
-    nama: "Rapat Koordinasi Dosen",
-    deskripsi: "Rapat rutin koordinasi dosen prodi TI",
-    waktu: new Date(2026, 6, 25),
-  },
-  {
-    id: 2,
-    nama: "Seminar Nasional AI",
-    deskripsi: "Seminar nasional kecerdasan buatan dan machine learning",
-    waktu: new Date(2026, 6, 26),
-  },
-  {
-    id: 3,
-    nama: "Workshop IoT & Embedded Systems",
-    deskripsi: "Pelatihan pengembangan IoT untuk dosen dan mahasiswa",
-    waktu: new Date(2026, 6, 27),
-  },
-  {
-    id: 4,
-    nama: "Ujian Tengah Semester",
-    deskripsi: "Pelaksanaan UTS semester ganjil 2026/2027",
-    waktu: new Date(2026, 6, 28),
-  },
-  {
-    id: 5,
-    nama: "Kuliah Tamu: Cloud Computing",
-    deskripsi: "Kuliah tamu oleh praktisi industri cloud",
-    waktu: new Date(2026, 6, 29),
-  },
-  {
-    id: 6,
-    nama: "Pendaftaran KP & Skripsi",
-    deskripsi: "Batas akhir pendaftaran kerja praktek dan tugas akhir",
-    waktu: new Date(2026, 6, 30),
-  },
-  {
-    id: 7,
-    nama: "Lomba Hackathon JTI",
-    deskripsi: "Kompetisi hackathon antar mahasiswa JTI",
-    waktu: new Date(2026, 7, 1),
-  },
-  {
-    id: 8,
-    nama: "Dies Natalis Polinema",
-    deskripsi: "Perayaan ulang tahun Politeknik Negeri Malang",
-    waktu: new Date(2026, 7, 3),
-  },
-];

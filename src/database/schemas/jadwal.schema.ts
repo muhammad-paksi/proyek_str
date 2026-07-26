@@ -86,9 +86,29 @@ export const agenda = pgTable(
     nama: varchar({ length: 100 }),
     deskripsi: varchar({ length: 500 }),
     waktu: date("waktu", { mode: "date" }).notNull(),
+    created_at: timestamp("created_at", { mode: "date" }).default(sql`now()`),
+    updated_at: timestamp("updated_at", { mode: "date" }).$onUpdateFn(() => sql`now()`),
   },
   (table) => [
     primaryKey({ columns: [table.id], name: "agenda_id_agenda" }),
+  ],
+);
+
+export const dasbor_agenda = pgTable(
+  "dasbor_agenda",
+  {
+    id_agenda: bigserial("id", { mode: "number" }).notNull()
+      .references(() => agenda.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    nama: varchar({ length: 100 }),
+    deskripsi: varchar({ length: 500 }),
+    lantai: numeric("lantai", { mode: "number" }).notNull(),
+    urutan: numeric("urutan", { mode: "number" }).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.id_agenda], name: "dasbor_id_agenda" }),
   ],
 );
 

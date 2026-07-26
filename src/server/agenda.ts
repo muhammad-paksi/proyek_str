@@ -1,7 +1,7 @@
 "use server";
 
 import * as v from "valibot";
-import { eq, sql, count } from "drizzle-orm";
+import { eq, sql, count, desc } from "drizzle-orm";
 import { db } from "@/database/conn";
 import { agenda, fileAgenda } from "@/database/schemas/jadwal.schema";
 import { uploadToR2, deleteFromR2, getKeyFromUrl } from "@/lib/r2";
@@ -20,8 +20,8 @@ export const getAgendaList = actionClient
       })
       .from(agenda)
       .leftJoin(fileAgenda, eq(agenda.id, fileAgenda.idAgenda))
-      .groupBy(agenda.id, agenda.nama, agenda.deskripsi, agenda.waktu)
-      .orderBy(agenda.waktu);
+      .groupBy(agenda.id, agenda.nama, agenda.deskripsi, agenda.waktu, agenda.updated_at)
+      .orderBy(desc(agenda.waktu), desc(agenda.updated_at));
 
     return rows;
   });
@@ -97,6 +97,9 @@ export async function uploadAgendaFiles(formData: FormData): Promise<{ urls: str
 
     urls.push(url);
   }
+
+  // Dummy update to trigger updated_at
+  await db.update(agenda).set({ id: agendaId }).where(eq(agenda.id, agendaId));
 
   return { urls };
 }

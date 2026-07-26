@@ -1,8 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { Text } from "@primer/react";
-import { CalendarCheck, CalendarX2, GripVertical, MonitorDot, Trash2, X } from "lucide-react";
+import { CalendarCheck, CalendarX2, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { lora, mona_sans, noto_sans, suse } from "@/lib/font";
 
 export type SelectedAgenda = {
@@ -10,16 +9,18 @@ export type SelectedAgenda = {
   nama: string;
   deskripsi?: string | null;
   waktu: Date;
+  fileCount?: number;
 };
 
 interface SelectedAgendaListProps {
   items: SelectedAgenda[];
   onRemove: (id: number) => void;
+  onReorder?: (id: number, direction: 'up' | 'down') => void;
   lantai: string;
   readOnly?: boolean;
 }
 
-export default function SelectedAgendaList({ items, onRemove, lantai, readOnly = false }: SelectedAgendaListProps) {
+export default function SelectedAgendaList({ items, onRemove, onReorder, lantai, readOnly = false }: SelectedAgendaListProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
@@ -91,15 +92,35 @@ export default function SelectedAgendaList({ items, onRemove, lantai, readOnly =
                   </p>
                 </div>
 
-                {/* Remove button */}
+                {/* Actions */}
                 {!readOnly && (
-                  <button
-                    onClick={() => onRemove(item.id)}
-                    className="shrink-0 p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all duration-150 cursor-pointer"
-                    title="Hapus dari dashboard"
-                  >
-                    <Trash2 size={14} strokeWidth={2} />
-                  </button>
+                  <div className="shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-150">
+                    <div className="flex flex-col">
+                      <button
+                        onClick={() => onReorder?.(item.id, 'up')}
+                        disabled={index === 0}
+                        className="p-1 rounded text-gray-400 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        title="Geser ke atas"
+                      >
+                        <ArrowUp size={14} strokeWidth={2.5} />
+                      </button>
+                      <button
+                        onClick={() => onReorder?.(item.id, 'down')}
+                        disabled={index === items.length - 1}
+                        className="p-1 rounded text-gray-400 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        title="Geser ke bawah"
+                      >
+                        <ArrowDown size={14} strokeWidth={2.5} />
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => onRemove(item.id)}
+                      className="p-1.5 ml-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 cursor-pointer transition-colors"
+                      title="Hapus dari dashboard"
+                    >
+                      <Trash2 size={15} strokeWidth={2} />
+                    </button>
+                  </div>
                 )}
               </div>
             );

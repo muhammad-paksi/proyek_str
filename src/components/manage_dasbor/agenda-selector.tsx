@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Text } from "@primer/react";
 import { DatePicker, Input, type GetProps, Empty } from "antd";
 import { CalendarPlus, Calendar1, Check, ListFilter, Plus, Search as SearchIcon } from "lucide-react";
+import dayjs, { Dayjs } from "dayjs";
 import { lora, mona_sans, noto_sans, suse } from "@/lib/font";
 
 export type AvailableAgenda = {
@@ -11,6 +12,7 @@ export type AvailableAgenda = {
   nama: string;
   deskripsi?: string | null;
   waktu: Date;
+  fileCount?: number;
 };
 
 type SearchProps = GetProps<typeof Input.Search>;
@@ -26,16 +28,30 @@ interface AgendaSelectorProps {
 
 export default function AgendaSelector({ items, selectedIds, onSelect, isLoading, readOnly = false }: AgendaSelectorProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
   const filteredItems = useMemo(() => {
-    if (!searchQuery.trim()) return items;
-    const query = searchQuery.toLowerCase();
-    return items.filter(
-      (item) =>
-        item.nama.toLowerCase().includes(query) ||
-        item.deskripsi?.toLowerCase().includes(query)
-    );
-  }, [items, searchQuery]);
+    let result = items;
+    
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (item) =>
+          item.nama.toLowerCase().includes(query) ||
+          item.deskripsi?.toLowerCase().includes(query)
+      );
+    }
+
+    if (selectedDate) {
+      const dateStr = selectedDate.format("YYYY-MM-DD");
+      result = result.filter((item) => {
+        const itemDate = item.waktu instanceof Date ? item.waktu : new Date(item.waktu);
+        return dayjs(itemDate).format("YYYY-MM-DD") === dateStr;
+      });
+    }
+
+    return result;
+  }, [items, searchQuery, selectedDate]);
 
   return (
     <div className="flex flex-col h-full">
@@ -47,7 +63,7 @@ export default function AgendaSelector({ items, selectedIds, onSelect, isLoading
           </div>
           <div>
             <h3 className={`text-sm font-semibold text-gray-800 ${mona_sans.className}`}>
-              Semua Agenda
+              Daftar Agenda
             </h3>
             <p className={`text-xs text-gray-400 ${noto_sans.className}`}>
               Pilih untuk ditampilkan
@@ -61,7 +77,16 @@ export default function AgendaSelector({ items, selectedIds, onSelect, isLoading
 
       {/* Search */}
       <div className="mb-3 flex gap-3 items-center justify-end">
-        <DatePicker format={"DD MMM YYYY"} placeholder="Pilih Tanggal" className="w-xs" suffixIcon={<Calendar1 className="text-blue-400" size={16} strokeWidth={2} />} />
+        <DatePicker 
+          format={"DD MMM YYYY"} 
+          placeholder="Pilih Tanggal" 
+          className="w-xs" 
+          suffixIcon={<Calendar1 className="text-blue-400" size={16} strokeWidth={2} />} 
+          value={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          allowClear
+          disabled={readOnly}
+        />
         <Search
           placeholder="Cari nama agenda..."
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -74,7 +99,7 @@ export default function AgendaSelector({ items, selectedIds, onSelect, isLoading
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
+      <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
         {isLoading ? (
           // Skeleton loading
           Array.from({ length: 4 }).map((_, i) => (
@@ -100,8 +125,8 @@ export default function AgendaSelector({ items, selectedIds, onSelect, isLoading
               {searchQuery ? "Tidak ditemukan" : "Semua agenda sudah dipilih"}
             </p>
             <p className={`text-xs text-gray-350 text-center max-w-56 ${noto_sans.className}`}>
-              {searchQuery
-                ? `Tidak ada agenda yang cocok dengan "${searchQuery}".`
+              {(searchQuery || selectedDate)
+                ? `Tidak ada agenda yang cocok dengan pencarian Anda.`
                 : "Semua agenda sudah ditambahkan ke dashboard."}
             </p>
           </div>
