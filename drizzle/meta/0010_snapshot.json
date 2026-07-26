@@ -1,0 +1,865 @@
+{
+  "id": "bec52e27-8549-42cf-b39e-e4cdc3d19987",
+  "prevId": "7df1172f-1c5e-429d-a7ea-afab29cba01f",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.agenda": {
+      "name": "agenda",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama": {
+          "name": "nama",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deskripsi": {
+          "name": "deskripsi",
+          "type": "varchar(500)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "waktu": {
+          "name": "waktu",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "agenda_id_agenda": {
+          "name": "agenda_id_agenda",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.dosen": {
+      "name": "dosen",
+      "schema": "",
+      "columns": {
+        "kode_dosen": {
+          "name": "kode_dosen",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama_dosen": {
+          "name": "nama_dosen",
+          "type": "varchar(75)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "dosen_kode_dosen": {
+          "name": "dosen_kode_dosen",
+          "columns": [
+            "kode_dosen"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.file_agenda": {
+      "name": "file_agenda",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_agenda": {
+          "name": "id_agenda",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "file_agenda_id_agenda_agenda_id_fk": {
+          "name": "file_agenda_id_agenda_agenda_id_fk",
+          "tableFrom": "file_agenda",
+          "tableTo": "agenda",
+          "columnsFrom": [
+            "id_agenda"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "file_agenda_id_file_agenda": {
+          "name": "file_agenda_id_file_agenda",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.hari": {
+      "name": "hari",
+      "schema": "",
+      "columns": {
+        "kode_hari": {
+          "name": "kode_hari",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama_hari": {
+          "name": "nama_hari",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "hari_kode_hari": {
+          "name": "hari_kode_hari",
+          "columns": [
+            "kode_hari"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.jadwal": {
+      "name": "jadwal",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kode_kelas": {
+          "name": "kode_kelas",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kode_ruang": {
+          "name": "kode_ruang",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kode_mk": {
+          "name": "kode_mk",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kode_dosen": {
+          "name": "kode_dosen",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kode_hari": {
+          "name": "kode_hari",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kode_jp": {
+          "name": "kode_jp",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "keterangan": {
+          "name": "keterangan",
+          "type": "varchar(250)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_hari": {
+          "name": "idx_hari",
+          "columns": [
+            {
+              "expression": "kode_hari",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_hari_kelas": {
+          "name": "idx_hari_kelas",
+          "columns": [
+            {
+              "expression": "kode_kelas",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "kode_hari",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "jadwal_kode_kelas_kelas_kode_kelas_fk": {
+          "name": "jadwal_kode_kelas_kelas_kode_kelas_fk",
+          "tableFrom": "jadwal",
+          "tableTo": "kelas",
+          "columnsFrom": [
+            "kode_kelas"
+          ],
+          "columnsTo": [
+            "kode_kelas"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "jadwal_kode_ruang_ruang_kode_ruang_fk": {
+          "name": "jadwal_kode_ruang_ruang_kode_ruang_fk",
+          "tableFrom": "jadwal",
+          "tableTo": "ruang",
+          "columnsFrom": [
+            "kode_ruang"
+          ],
+          "columnsTo": [
+            "kode_ruang"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "jadwal_kode_mk_mata_kuliah_kode_mk_fk": {
+          "name": "jadwal_kode_mk_mata_kuliah_kode_mk_fk",
+          "tableFrom": "jadwal",
+          "tableTo": "mata_kuliah",
+          "columnsFrom": [
+            "kode_mk"
+          ],
+          "columnsTo": [
+            "kode_mk"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "jadwal_kode_dosen_dosen_kode_dosen_fk": {
+          "name": "jadwal_kode_dosen_dosen_kode_dosen_fk",
+          "tableFrom": "jadwal",
+          "tableTo": "dosen",
+          "columnsFrom": [
+            "kode_dosen"
+          ],
+          "columnsTo": [
+            "kode_dosen"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "jadwal_kode_hari_hari_kode_hari_fk": {
+          "name": "jadwal_kode_hari_hari_kode_hari_fk",
+          "tableFrom": "jadwal",
+          "tableTo": "hari",
+          "columnsFrom": [
+            "kode_hari"
+          ],
+          "columnsTo": [
+            "kode_hari"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "jadwal_kode_jp_jam_pelajaran_kode_jp_fk": {
+          "name": "jadwal_kode_jp_jam_pelajaran_kode_jp_fk",
+          "tableFrom": "jadwal",
+          "tableTo": "jam_pelajaran",
+          "columnsFrom": [
+            "kode_jp"
+          ],
+          "columnsTo": [
+            "kode_jp"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "jadwal_id_jadwal": {
+          "name": "jadwal_id_jadwal",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.jam_pelajaran": {
+      "name": "jam_pelajaran",
+      "schema": "",
+      "columns": {
+        "kode_jp": {
+          "name": "kode_jp",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jam_mulai": {
+          "name": "jam_mulai",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "jam_selesai": {
+          "name": "jam_selesai",
+          "type": "time",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "jam_pelajaran_kode_jp": {
+          "name": "jam_pelajaran_kode_jp",
+          "columns": [
+            "kode_jp"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "kode_jp_unique": {
+          "name": "kode_jp_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "kode_jp"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.kelas": {
+      "name": "kelas",
+      "schema": "",
+      "columns": {
+        "kode_kelas": {
+          "name": "kode_kelas",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama_kelas": {
+          "name": "nama_kelas",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kode_prodi": {
+          "name": "kode_prodi",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "kelas_kode_prodi_prodi_kode_prodi_fk": {
+          "name": "kelas_kode_prodi_prodi_kode_prodi_fk",
+          "tableFrom": "kelas",
+          "tableTo": "prodi",
+          "columnsFrom": [
+            "kode_prodi"
+          ],
+          "columnsTo": [
+            "kode_prodi"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "kelas_kode_kelas": {
+          "name": "kelas_kode_kelas",
+          "columns": [
+            "kode_kelas"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.mata_kuliah": {
+      "name": "mata_kuliah",
+      "schema": "",
+      "columns": {
+        "kode_mk": {
+          "name": "kode_mk",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama_mk": {
+          "name": "nama_mk",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "mata_kuliah_kode_mk": {
+          "name": "mata_kuliah_kode_mk",
+          "columns": [
+            "kode_mk"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pelaksanaan": {
+      "name": "pelaksanaan",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kode_jadwal": {
+          "name": "kode_jadwal",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_tanggal_jadwal": {
+          "name": "idx_tanggal_jadwal",
+          "columns": [
+            {
+              "expression": "date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "kode_jadwal",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "pelaksanaan_kode_jadwal_jadwal_id_fk": {
+          "name": "pelaksanaan_kode_jadwal_jadwal_id_fk",
+          "tableFrom": "pelaksanaan",
+          "tableTo": "jadwal",
+          "columnsFrom": [
+            "kode_jadwal"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pelaksanaan_id": {
+          "name": "pelaksanaan_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.perwakilan": {
+      "name": "perwakilan",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_user": {
+          "name": "id_user",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kode_kelas": {
+          "name": "kode_kelas",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "perwakilan_kode_kelas_kelas_kode_kelas_fk": {
+          "name": "perwakilan_kode_kelas_kelas_kode_kelas_fk",
+          "tableFrom": "perwakilan",
+          "tableTo": "kelas",
+          "columnsFrom": [
+            "kode_kelas"
+          ],
+          "columnsTo": [
+            "kode_kelas"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "perwakilan_id": {
+          "name": "perwakilan_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.prodi": {
+      "name": "prodi",
+      "schema": "",
+      "columns": {
+        "kode_prodi": {
+          "name": "kode_prodi",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama_prodi": {
+          "name": "nama_prodi",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "prodi_kode_prodi": {
+          "name": "prodi_kode_prodi",
+          "columns": [
+            "kode_prodi"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(75)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama_hari": {
+          "name": "nama_hari",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "role_id": {
+          "name": "role_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ruang": {
+      "name": "ruang",
+      "schema": "",
+      "columns": {
+        "kode_ruang": {
+          "name": "kode_ruang",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama_ruang": {
+          "name": "nama_ruang",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kapasitas": {
+          "name": "kapasitas",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "ruang_kode_ruang": {
+          "name": "ruang_kode_ruang",
+          "columns": [
+            "kode_ruang"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nama": {
+          "name": "nama",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(75)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(75)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "status": {
+          "name": "status",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "kode_kelas": {
+          "name": "kode_kelas",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_kode_kelas_kelas_kode_kelas_fk": {
+          "name": "user_kode_kelas_kelas_kode_kelas_fk",
+          "tableFrom": "user",
+          "tableTo": "kelas",
+          "columnsFrom": [
+            "kode_kelas"
+          ],
+          "columnsTo": [
+            "kode_kelas"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_id_user": {
+          "name": "user_id_user",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "user_username_unique": {
+          "name": "user_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

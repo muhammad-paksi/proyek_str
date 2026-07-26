@@ -14,6 +14,7 @@ import {
   time,
   text,
   boolean,
+  json,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -65,6 +66,11 @@ export const role = pgTable(
   {
     id: bigserial("id", { mode: "number" }).notNull(),
     username: varchar({ length: 75 }).notNull(),
+    /**
+     * Jenis ROLE: super_admin, staf, mahasiswa, admin
+     * Admin adalah admin jurusan.
+     * super_admin adalah admin yang punya akses ke seluruh sistem, termasuk db.
+     */
     role: varchar({length: 50}).notNull(),
     kelas: varchar("nama_hari", { length: 20 }),
   },
@@ -76,14 +82,30 @@ export const role = pgTable(
 export const agenda = pgTable(
   "agenda",
   {
-    idAgenda: bigserial("id", { mode: "number" }).notNull(),
+    id: bigserial("id", { mode: "number" }).notNull(),
     nama: varchar({ length: 100 }),
-    imageURL: text("image_url"),
     deskripsi: varchar({ length: 500 }),
     waktu: date("waktu", { mode: "date" }).notNull(),
   },
   (table) => [
-    primaryKey({ columns: [table.idAgenda], name: "agenda_id_agenda" }),
+    primaryKey({ columns: [table.id], name: "agenda_id_agenda" }),
+  ],
+);
+
+export const fileAgenda = pgTable(
+  "file_agenda",
+  {
+    id: bigserial("id", { mode: "number" }).notNull(),
+    idAgenda: bigserial("id_agenda", { mode: "number" })
+      .notNull()
+      .references(() => agenda.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    url: text("url").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.id], name: "file_agenda_id_file_agenda" }),
   ],
 );
 
