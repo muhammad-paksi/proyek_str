@@ -146,6 +146,16 @@ export const pelaksanaan = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    /**
+     * Status pelaksanaan
+     * 0 = Belum dikonfirmasi
+     * 1 = Offline
+     * 2 = Online
+     * 3 = Pindah
+     * 4 = Kosong
+     * 5 = Dibatalkan
+     */
+    status: numeric("status", {mode: "number"}).default(0), 
     date: date("date", { mode: "date" }).notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),
     updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdateFn(() => sql`now()`),
