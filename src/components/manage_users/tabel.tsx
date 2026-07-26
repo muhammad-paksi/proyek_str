@@ -11,6 +11,7 @@ import { ActionList, ActionMenu, IconButton, Label, Text } from '@primer/react';
 import { CalendarX, ClipboardList, Eraser, ListPlus, Menu, Eye, Paperclip, PenLine, Dot } from "lucide-react";
 import { google_sans, lora, mona_sans, noto_sans, noto_serif, roboto, roboto_flex, shantell_sans, suse } from "@/lib/font";
 import { Tag } from "antd";
+import { getUserList } from "@/server/user";
 
 export default function TableUser({ onSelectDelete }: { onSelectDelete: (id: any, username: string, element: any) => void }) {
   const router = useRouter();
@@ -29,38 +30,10 @@ export default function TableUser({ onSelectDelete }: { onSelectDelete: (id: any
     // initialData: undefined,
     refetchOnMount: true,
     queryFn: async () => {
-      let data: {
-        id: number;
-        username: string;
-        role: string;
-        status: string;
-      }[] = [
-          {
-            id: 0,
-            username: "Joko",
-            role: "mahasiswa",
-            status: "active"
-          },
-          {
-            id: 1,
-            username: "Widodo",
-            role: "staf",
-            status: "active"
-          },
-          {
-            id: 2,
-            username: "Purbaya",
-            role: "admin",
-            status: "active"
-          },
-          {
-            id: 3,
-            username: "Kalla",
-            role: "admin",
-            status: "inactive"
-          }];
-
-      return data;
+      const result = await getUserList();
+      if (!result?.data) return [];
+      
+      return result.data;
     }
   });
 
@@ -189,7 +162,7 @@ export default function TableUser({ onSelectDelete }: { onSelectDelete: (id: any
                           <ActionList>
                             <ActionList.Item className=""
                               onClick={() => {
-                                router.push(`/manage_agenda/${row.id}/view`);
+                                router.push(`/manage_users/${row.id}/view`);
                               }}
                             >
                               <span className={`font-medium! ${mona_sans.className}`}>Lihat</span>
@@ -197,7 +170,7 @@ export default function TableUser({ onSelectDelete }: { onSelectDelete: (id: any
                             </ActionList.Item>
                             
                             <ActionList.Item className="" onClick={() => {
-                              router.push(`/manage_agenda/${row.id}/edit`);
+                              router.push(`/manage_users/${row.id}/edit`);
                             }}>
                               <span className={`font-medium! ${mona_sans.className}`}>Edit</span>
                               <ActionList.TrailingVisual className="ml-5"><PenLine size={12} strokeWidth={2} /></ActionList.TrailingVisual>

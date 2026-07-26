@@ -1,0 +1,1 @@
+import { db } from './src/database/conn'; import { role, user } from './src/database/schemas/jadwal.schema'; async function run() { const r = await db.select().from(role).limit(5); const u = await db.select().from(user).limit(5); console.log({roles: r, users: u}); process.exit(0); } run();

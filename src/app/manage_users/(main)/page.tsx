@@ -11,6 +11,9 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import TableUser from "@/components/manage_users/tabel";
 
+import { deleteUser } from "@/server/user";
+import { useQueryClient } from "@tanstack/react-query";
+
 // Activate the Day.js locale globally
 dayjs.locale('id');
 
@@ -20,6 +23,8 @@ const { Search } = Input;
 const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
 
 export default function Page() {
+  const queryClient = useQueryClient();
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: number;
@@ -31,6 +36,19 @@ export default function Page() {
   const handleClose = () => {
     setDeleteTarget({ id: -1, username: "", triggerEl: null });
     setIsDeleteOpen(false);
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteUser({ idUser: deleteTarget.id, username: deleteTarget.username });
+      await queryClient.invalidateQueries({ queryKey: ["manage-users"] });
+      handleClose();
+    } catch (e) {
+      console.error("Failed to delete user:", e);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -49,22 +67,23 @@ export default function Page() {
       </main>
       {isDeleteOpen && (
         <Dialog
-          title= {<span className={`font-semibold ${mona_sans.className}`}>Hapus agenda</span>}  
+          title= {<span className={`font-semibold ${mona_sans.className}`}>Hapus pengguna</span>}  
           onClose= { handleClose }
           footerButtons={[
             {
               buttonType: 'default', 
-              content: <span className={`font-semibold ${mona_sans.className}`}>Cancel</span>, 
+              content: <span className={`font-semibold ${mona_sans.className}`}>Batal</span>, 
               onClick: handleClose
             }, {
               buttonType: 'danger', 
-              content: <span className={`font-semibold ${mona_sans.className}`}>Delete the universe</span>
+              content: <span className={`font-semibold ${mona_sans.className}`}>{isDeleting ? "Menghapus..." : "Hapus Pengguna"}</span>,
+              onClick: handleDelete
             },
           ]}
           returnFocusRef={{ current: deleteTarget.triggerEl ?? null }}
         >
           <p className={`${mona_sans.className}`}>
-            This is where the dialog content would go.
+            Apakah Anda yakin ingin menghapus pengguna <b>{deleteTarget.username}</b>? Tindakan ini tidak dapat dibatalkan.
           </p>
         </Dialog>
       )}
