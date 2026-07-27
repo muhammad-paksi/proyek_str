@@ -32,20 +32,24 @@ const saveDasborSchema = v.object({
 export const saveDasborAgenda = actionClient
   .inputSchema(saveDasborSchema)
   .action(async ({ parsedInput }) => {
-    // Delete existing entries for this floor
-    await db
-      .delete(dasbor_agenda)
-      .where(eq(dasbor_agenda.lantai, parsedInput.lantai));
+    await db.transaction(async (tx) => {
+      // 1. Hapus entri lama menggunakan `tx` (bukan `db`)
+      await tx
+        .delete(dasbor_agenda)
+        .where(eq(dasbor_agenda.lantai, parsedInput.lantai));
 
-    // Insert new entries
-    if (parsedInput.agendaIds.length > 0) {
-      const values = parsedInput.agendaIds.map((id, index) => ({
-        id_agenda: id,
-        lantai: parsedInput.lantai,
-        urutan: index + 1,
-      }));
-      await db.insert(dasbor_agenda).values(values);
-    }
+      // 2. Tambah entri baru menggunakan `tx`
+      if (parsedInput.agendaIds.length > 0) {
+        const values = parsedInput.agendaIds.map((id, index) => ({
+          id_agenda: id,
+          lantai: parsedInput.lantai,
+          urutan: index + 1,
+        }));
+        console.log("values", values)
+        
+        await tx.insert(dasbor_agenda).values(values);
+      }
+    });
 
     return { success: true };
   });

@@ -102,14 +102,9 @@ export const dasbor_agenda = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    nama: varchar({ length: 100 }),
-    deskripsi: varchar({ length: 500 }),
     lantai: numeric("lantai", { mode: "number" }).notNull(),
     urutan: numeric("urutan", { mode: "number" }).notNull(),
-  },
-  (table) => [
-    primaryKey({ columns: [table.id_agenda], name: "dasbor_id_agenda" }),
-  ],
+  }
 );
 
 export const fileAgenda = pgTable(

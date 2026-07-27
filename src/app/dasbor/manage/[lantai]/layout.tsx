@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Header from "@/components/manage_users/header";
+import Header from "@/components/manage_dasbor/header";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id; // Ambil ID dari URL

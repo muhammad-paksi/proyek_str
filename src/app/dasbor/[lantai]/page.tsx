@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { Menu } from "lucide-react";
-import Tooltip from "@mui/material/Tooltip";
 import { Button, message } from 'antd'
 import Header from "@/components/header";
-import { useParams } from "next/navigation";
-import { getDasborData, mulaiKelas } from "@/server/dasbor-view";
+import Tooltip from "@mui/material/Tooltip";
 import { suse } from "@/lib/font";
+import { getDasborData, mulaiKelas } from "@/server/dasbor-view";
 
 export default function Page() {
   const params = useParams<{ lantai: string }>();

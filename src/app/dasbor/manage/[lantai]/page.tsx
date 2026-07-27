@@ -7,6 +7,7 @@ import { Text } from "@primer/react";
 import { Dialog } from "@primer/react/experimental";
 import { Building2, CalendarCheck, Info, Layers, MonitorDot, Sparkles } from "lucide-react";
 import { lora, mona_sans, noto_sans, suse } from "@/lib/font";
+import Header from "@/components/manage_dasbor/header";
 import SelectedAgendaList, { type SelectedAgenda } from "@/components/manage_dasbor/selected-agenda-list";
 import AgendaSelector, { type AvailableAgenda } from "@/components/manage_dasbor/agenda-selector";
 import { getAgendaList } from "@/server/agenda";
@@ -133,6 +134,7 @@ export default function Page() {
 
   const handleSave = useCallback(async () => {
     setIsSaving(true);
+    console.log("Lihat",selectedIds)
     try {
       await saveDasborAgenda({
         lantai: lantaiNum,

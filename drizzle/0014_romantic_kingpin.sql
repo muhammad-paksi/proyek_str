@@ -1,0 +1,1 @@
+ALTER TABLE "dasbor_agenda" DROP CONSTRAINT "dasbor_id_agenda";
