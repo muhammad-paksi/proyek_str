@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { Menu } from "lucide-react";
-import { Button, message } from 'antd'
 import Header from "@/components/header";
 import Tooltip from "@mui/material/Tooltip";
-import { suse } from "@/lib/font";
+import { Menu } from "lucide-react";
+import { Table } from "@heroui/react";
+import { Button, message } from 'antd'
+import { lora, suse } from "@/lib/font";
 import { getDasborData, mulaiKelas } from "@/server/dasbor-view";
 
 export default function Page() {
@@ -43,14 +44,14 @@ export default function Page() {
     if (images.length === 0) return;
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }, 5000); 
+    }, 5000);
     return () => clearInterval(interval);
   }, [images]);
 
   // Logic Auto-scroll Table
   useEffect(() => {
     if (!scrollRef.current || pelaksanaan.length === 0) return;
-    
+
     let animationFrameId: number;
     let scrollAmount = 0;
     const speed = 2; // pixels per frame
@@ -88,85 +89,103 @@ export default function Page() {
     <>
       <Header />
 
-      <main className="w-screen h-[93vh] grid grid-cols-7 pl-6 pr-5 ">
+      <main className="w-full h-[92vh] grid grid-cols-7 pl-5 pr-5 ">
         {/* KIRI - SLIDESHOW AGENDA */}
-        <div className="col-span-3 border-e border-e-gray-300 relative overflow-hidden flex items-center justify-center bg-gray-100">
-           {loading ? (
-              <div className="text-gray-500">Memuat...</div>
-           ) : images.length > 0 ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img 
-                src={images[currentImageIndex]} 
-                alt="Agenda" 
-                className="object-contain w-full h-full"
-              />
-           ) : (
-              <div className={`text-gray-500 text-sm ${suse.className}`}>Tidak ada gambar agenda</div>
-           )}
+        <div className="col-span-3 pr-3 border-e border-e-gray-300 relative overflow-hidden flex items-center justify-center bg-gray-100">
+          {loading ? (
+            <div className="text-gray-500">Memuat...</div>
+          ) : images.length > 0 ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={images[currentImageIndex]}
+              alt="Agenda"
+              className="object-contain w-full h-full"
+            />
+          ) : (
+            <div className={`text-gray-500 text-sm ${suse.className}`}>Tidak ada gambar agenda</div>
+          )}
         </div>
 
         {/* KANAN - TABEL PELAKSANAAN */}
         <div className="col-span-4 pl-4 flex flex-col h-full py-4">
-           <h2 className={`text-xl font-bold mb-4 ${suse.className}`}>Pelaksanaan Kelas Hari Ini</h2>
-           
-           {loading ? (
-              <div className="flex-1 flex items-center justify-center text-gray-500">
-                Memuat...
-              </div>
-           ) : pelaksanaan.length > 0 ? (
-             <div className="flex-1 flex flex-col overflow-hidden border border-gray-300 rounded-lg">
-               {/* Table Header */}
-               <div className="grid grid-cols-5 gap-2 font-bold bg-gray-200 p-3 text-center border-b border-gray-300">
-                 <div>Kelas</div>
-                 <div>Mata Kuliah</div>
-                 <div>Jam</div>
-                 <div>Ruang</div>
-                 <div>Status</div>
-               </div>
-               
-               {/* Table Body (Auto-scrolling) */}
-               <div ref={scrollRef} className="flex-1 overflow-y-hidden">
-                  <div className="flex flex-col">
-                    {pelaksanaan.map((item, idx) => {
-                       let statusText = "Belum dikonfirmasi";
-                       let statusColor = "text-gray-500";
-                       switch(Number(item.status)) {
-                         case 1: statusText = "Offline"; statusColor = "text-green-600"; break;
-                         case 2: statusText = "Online"; statusColor = "text-blue-600"; break;
-                         case 3: statusText = "Pindah"; statusColor = "text-yellow-600"; break;
-                         case 4: statusText = "Kosong"; statusColor = "text-red-600"; break;
-                         case 5: statusText = "Dibatalkan"; statusColor = "text-gray-800"; break;
-                       }
+          <h2 className={`text-xl font-semibold mb-4 ${lora.className}`}>Kelas hari ini</h2>
 
-                       return (
-                         <div key={item.id} className="grid grid-cols-5 gap-2 border-b p-3 text-center items-center">
-                           <div className="font-semibold">{item.namaKelas}</div>
-                           <div className="text-sm">{item.mataKuliah}</div>
-                           <div>{item.jamMulai?.slice(0, 5)} - {item.jamSelesai?.slice(0, 5)}</div>
-                           <div>{item.ruang || "-"}</div>
-                           <div className={`font-semibold ${statusColor}`}>{statusText}</div>
-                         </div>
-                       )
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center text-gray-500">
+              Memuat...
+            </div>
+          ) : pelaksanaan.length > 0 ? (
+            <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              <table className="w-full table-fixed border-collapse text-left text-sm text-slate-700">
+                <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-semibold">
+                  <tr>
+                    <th className="w-[5%] py-3 px-4">No.</th>
+                    <th className="w-[15%] py-3 px-4">Kelas</th>
+                    <th className="w-[25%] py-3 px-4">Mata Kuliah</th>
+                    <th className="w-[20%] py-3 px-4">Jam</th>
+                    <th className="w-[15%] py-3 px-4">Ruang</th>
+                    <th className="w-[20%] py-3 px-4">Status</th>
+                  </tr>
+                </thead>
+              </table>
+
+              {/* Body */}
+              <div
+                // ref={scrollRef}
+                className="h-72 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:bg-slate-300"
+              >
+                <table className="w-full table-fixed border-collapse text-left text-sm text-slate-700">
+                  <tbody className="divide-y divide-slate-100">
+                    {pelaksanaan.map((item, idx) => {
+                      let statusText = "Belum dikonfirmasi";
+                      let badgeClass = "bg-slate-100 text-slate-600 border border-slate-200";
+                      switch (Number(item.status)) {
+                        case 1: statusText = "Offline"; badgeClass = "bg-emerald-50 text-emerald-700 border border-emerald-200"; break;
+                        case 2: statusText = "Online"; badgeClass = "bg-blue-50 text-blue-700 border border-blue-200"; break;
+                        case 3: statusText = "Pindah"; badgeClass = "bg-amber-50 text-amber-700 border border-amber-200"; break;
+                        case 4: statusText = "Kosong"; badgeClass = "bg-rose-50 text-rose-700 border border-rose-200"; break;
+                        case 5: statusText = "Dibatalkan"; badgeClass = "bg-slate-100 text-slate-700 border border-slate-200"; break;
+                      }
+
+                      return (
+                        <tr key={item.id} className="hover:bg-slate-50/80 transition-colors duration-200">
+                          <td className="w-[5%] py-3 px-4 font-medium text-slate-900">{idx + 1}</td>
+                          <td className="w-[15%] py-3 px-4 font-medium text-slate-900">{item.kelas.replace(/_/g, " ")}</td>
+                          <td className="w-[25%] py-3 px-4">
+                            <div className="truncate" title={item.mataKuliah}>{item.mataKuliah}</div>
+                          </td>
+                          <td className="w-[20%] py-3 px-4 whitespace-nowrap text-slate-600">
+                            {item.jamMulai?.slice(0, 5)} - {item.jamSelesai?.slice(0, 5)}
+                          </td>
+                          <td className="w-[15%] py-3 px-4 text-slate-600">{item.ruang || "-"}</td>
+                          <td className="w-[20%] py-3 px-4">
+                            <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${badgeClass}`}>
+                              {statusText}
+                            </span>
+                          </td>
+                        </tr>
+                      )
                     })}
-                  </div>
-               </div>
-             </div>
-           ) : (
-             <div className="flex-1 flex items-center justify-center">
-               {role === "admin" ? (
-                 <div className="text-center">
-                   <p className={`mb-4 text-gray-600 text-base ${suse.className}`}>Tabel pelaksanaan untuk hari ini kosong.</p>
-                   <Button type="primary" onClick={handleMulaiKelas} size="large">
-                     Mulai Kelas
-                   </Button>
-                 </div>
-               ) : (
-                 <div className={`text-gray-500 text-base ${suse.className}`}>
-                   Tidak ada jadwal kuliah untuk ditampilkan
-                 </div>
-               )}
-             </div>
-           )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              {role === "admin" ? (
+                <div className="text-center">
+                  <p className={`mb-4 text-gray-600 text-base ${suse.className}`}>Tabel pelaksanaan untuk hari ini kosong.</p>
+                  <Button type="primary" onClick={handleMulaiKelas} size="large">
+                    Mulai Kelas
+                  </Button>
+                </div>
+              ) : (
+                <div className={`text-gray-500 text-base ${suse.className}`}>
+                  Tidak ada jadwal kuliah untuk ditampilkan
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </>

@@ -28,7 +28,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-screen h-[7vh] flex items-center justify-between py-2 pl-7 pr-12 border-b border-b-gray-300 bg-white">
+      <header className="w-screen h-[8vh] flex items-center justify-between py-2 pl-7 pr-12 border-b border-b-gray-300 bg-white">
         {/* LEFT NAV */}
         <div className="h-full w-fit flex items-center">
           <Tooltip
