@@ -46,6 +46,7 @@ export const user = pgTable(
     unique("user_username_unique").on(table.username),
   ],
 );
+
 export const perwakilan = pgTable("perwakilan",{
   id: bigserial("id", { mode: "number" }).notNull(),
   idUser: varchar("id_user", { length: 50 }).notNull(),
