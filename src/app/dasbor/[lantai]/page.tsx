@@ -10,6 +10,7 @@ import { Menu } from "lucide-react";
 import { Table } from "@heroui/react";
 import { Button, message } from 'antd'
 import { lora, suse } from "@/lib/font";
+import { useRowHeights } from "@/lib/useRowHeight";
 import { getDasborData, mulaiKelas } from "@/server/dasbor-view";
 
 export default function Page() {
@@ -20,9 +21,11 @@ export default function Page() {
   const [pelaksanaan, setPelaksanaan] = useState<any[]>([]);
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { rowHeights, setRowRef } = useRowHeights();
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchData();
@@ -48,31 +51,27 @@ export default function Page() {
     return () => clearInterval(interval);
   }, [images]);
 
-  // Logic Auto-scroll Table
   useEffect(() => {
-    if (!scrollRef.current || pelaksanaan.length === 0) return;
+    const container = tableRef.current;
+    if (!container || pelaksanaan.length === 0) return;
+  
+    // const rowHeight = 40 * 4; // kira-kira tinggi 4 baris
+    /* Below using real time row height as alternative to the above statement  */
+    const rowHeight = 40 * 10; // kira-kira tinggi 4 baris
+    const duration = 5000; // scroll tiap 5 detik
 
-    let animationFrameId: number;
-    let scrollAmount = 0;
-    const speed = 2; // pixels per frame
+    const interval = setInterval(() => {
+      if (!container) return;
 
-    const scroll = () => {
-      if (scrollRef.current) {
-        const { scrollHeight, clientHeight } = scrollRef.current;
-        if (scrollHeight > clientHeight) {
-          scrollAmount += speed;
-          if (scrollAmount >= scrollHeight - clientHeight) {
-            scrollAmount = 0;
-          }
-          scrollRef.current.scrollTop = scrollAmount;
-        }
+      // kalau udah di bawah banget, reset ke atas
+      if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+        container.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        container.scrollBy({ top: rowHeight, behavior: "smooth" });
       }
-      animationFrameId = requestAnimationFrame(scroll);
-    };
+    }, duration);
 
-    animationFrameId = requestAnimationFrame(scroll);
-
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => clearInterval(interval);
   }, [pelaksanaan]);
 
   const handleMulaiKelas = async () => {
@@ -117,11 +116,11 @@ export default function Page() {
           ) : pelaksanaan.length > 0 ? (
             <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
               <table className="w-full table-fixed border-collapse text-left text-sm text-slate-700">
-                <thead className="bg-slate-50 text-slate-600 uppercase text-xs font-semibold">
+                <thead className="bg-blue-50 text-slate-600 uppercase text-xs font-semibold">
                   <tr>
-                    <th className="w-[5%] py-3 px-4">No.</th>
+                    <th className="w-[7%] py-3 px-4">No.</th>
                     <th className="w-[15%] py-3 px-4">Kelas</th>
-                    <th className="w-[25%] py-3 px-4">Mata Kuliah</th>
+                    <th className="w-[23%] py-3 px-4">Mata Kuliah</th>
                     <th className="w-[20%] py-3 px-4">Jam</th>
                     <th className="w-[15%] py-3 px-4">Ruang</th>
                     <th className="w-[20%] py-3 px-4">Status</th>
@@ -132,7 +131,8 @@ export default function Page() {
               {/* Body */}
               <div
                 // ref={scrollRef}
-                className="h-72 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:bg-slate-300"
+                ref={tableRef}
+                className="h-90 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:bg-slate-300"
               >
                 <table className="w-full table-fixed border-collapse text-left text-sm text-slate-700">
                   <tbody className="divide-y divide-slate-100">
@@ -148,13 +148,17 @@ export default function Page() {
                       }
 
                       return (
-                        <tr key={item.id} className="hover:bg-slate-50/80 transition-colors duration-200">
-                          <td className="w-[5%] py-3 px-4 font-medium text-slate-900">{idx + 1}</td>
+                        <tr 
+                          key={item.id} 
+                          ref={setRowRef(item.id)} // Assign ref
+                          className="hover:bg-slate-50/80 transition-colors duration-200"
+                        >
+                          <td className="w-[7%] py-3 px-4 font-semibold text-slate-900">{idx + 1}.</td>
                           <td className="w-[15%] py-3 px-4 font-medium text-slate-900">{item.kelas.replace(/_/g, " ")}</td>
-                          <td className="w-[25%] py-3 px-4">
+                          <td className="w-[23%] py-3 px-4">
                             <div className="truncate" title={item.mataKuliah}>{item.mataKuliah}</div>
                           </td>
-                          <td className="w-[20%] py-3 px-4 whitespace-nowrap text-slate-600">
+                          <td className={`w-[20%] py-3 px-4 whitespace-nowrap text-slate-600 ${suse.className}`}>
                             {item.jamMulai?.slice(0, 5)} - {item.jamSelesai?.slice(0, 5)}
                           </td>
                           <td className="w-[15%] py-3 px-4 text-slate-600">{item.ruang || "-"}</td>
@@ -191,3 +195,30 @@ export default function Page() {
     </>
   )
 }
+
+ // Logic Auto-scroll Table
+  // useEffect(() => {
+  //   if (!scrollRef.current || pelaksanaan.length === 0) return;
+
+  //   let animationFrameId: number;
+  //   let scrollAmount = 0;
+  //   const speed = 2; // pixels per frame
+
+  //   const scroll = () => {
+  //     if (scrollRef.current) {
+  //       const { scrollHeight, clientHeight } = scrollRef.current;
+  //       if (scrollHeight > clientHeight) {
+  //         scrollAmount += speed;
+  //         if (scrollAmount >= scrollHeight - clientHeight) {
+  //           scrollAmount = 0;
+  //         }
+  //         scrollRef.current.scrollTop = scrollAmount;
+  //       }
+  //     }
+  //     animationFrameId = requestAnimationFrame(scroll);
+  //   };
+
+  //   animationFrameId = requestAnimationFrame(scroll);
+
+  //   return () => cancelAnimationFrame(animationFrameId);
+  // }, [pelaksanaan]);
