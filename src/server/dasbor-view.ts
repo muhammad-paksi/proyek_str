@@ -42,7 +42,7 @@ export const getDasborData = actionClient
         kelas: kelas.kodeKelas,
         namaKelas: kelas.namaKelas,
         mataKuliah: mataKuliah.namaMk,
-        ruang: ruang.namaRuang,
+        ruang: pelaksanaan.ruang,
         jamMulai: jamPelajaran.jamMulai,
         jamSelesai: jamPelajaran.jamSelesai,
         kodeJp: jamPelajaran.kodeJp,

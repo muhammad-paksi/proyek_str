@@ -13,7 +13,7 @@ const STATUS_OPTIONS = [
   { value: 0, label: "Belum dikonfirmasi" },
   { value: 1, label: "Offline" },
   { value: 2, label: "Online" },
-  { value: 3, label: "Pindah" },
+  { value: 3, label: "Reschedule" },
   { value: 4, label: "Kosong" },
   { value: 5, label: "Dibatalkan" },
 ];

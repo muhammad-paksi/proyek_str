@@ -167,7 +167,7 @@ export default function Page() {
                           <td className={`w-[20%] py-3 px-4 whitespace-nowrap text-slate-600 ${suse.className}`}>
                             {item.jamMulai?.slice(0, 5)} - {item.jamSelesai?.slice(0, 5)}
                           </td>
-                          <td className="w-[15%] py-3 px-4 text-slate-600">{item.ruang || "-"}</td>
+                          <td className="w-[15%] py-3 px-4 text-slate-600">{item.ruang ? item.ruang.split("_")[0] : "-"}</td>
                           <td className="w-[23%] py-3 px-4">
                             {status == 0 ? <Tag color="#707070" variant="outlined" className="rounded-full! font-medium">Belum dikonfirmasi</Tag>
                               : status == 1 ? <Tag color="#00A550" variant="outlined" className="rounded-full! font-medium">Offline</Tag>

@@ -34,10 +34,12 @@ export default function TableKelas({
     },
   });
 
-  const numberedUsers = (kelasList ?? []).map((item, index) => ({
-    ...item,
-    no: index + 1,
-  }));
+  const numberedUsers = [...(kelasList ?? [])]
+    .sort((a, b) => a.jam_pelajaran.localeCompare(b.jam_pelajaran))
+    .map((item, index) => ({
+      ...item,
+      no: index + 1,
+    }));
 
   return (
     <>

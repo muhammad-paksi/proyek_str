@@ -51,7 +51,7 @@ export async function getMyClassPelaksanaan(selectedDate?: string) {
       mata_kuliah: mataKuliah.namaMk,
       jamMulai: jamPelajaran.jamMulai,
       jamSelesai: jamPelajaran.jamSelesai,
-      ruang: ruang.namaRuang,
+      ruang: pelaksanaan.ruang,
       kodeKelas: jadwal.kodeKelas,
     })
     .from(pelaksanaan)
