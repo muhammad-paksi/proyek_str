@@ -1,0 +1,2 @@
+ALTER TABLE "pelaksanaan" ADD COLUMN "kode_ruang" varchar(8);--> statement-breakpoint
+ALTER TABLE "pelaksanaan" ADD CONSTRAINT "pelaksanaan_kode_ruang_ruang_kode_ruang_fk" FOREIGN KEY ("kode_ruang") REFERENCES "public"."ruang"("kode_ruang") ON DELETE set null ON UPDATE cascade;

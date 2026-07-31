@@ -193,6 +193,11 @@ export const pelaksanaan = pgTable(
      * 4 = Kosong
      * 5 = Dibatalkan
      */
+    ruang: varchar("kode_ruang", { length: 8 })
+      .references(() => ruang.kodeRuang, {
+        onDelete: "set null",
+        onUpdate: "cascade"
+      }),
     status: numeric("status", {mode: "number"}).default(0), 
     date: date("date", { mode: "date" }).notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).default(sql`now()`),

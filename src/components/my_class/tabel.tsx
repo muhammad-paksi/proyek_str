@@ -1,21 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Select } from "antd";
-import { Text } from '@primer/react';
+import { Select, Tag } from "antd";
 import { useRipple } from 'use-ripple-hook';
 import { useQuery } from "@tanstack/react-query";
+import { KebabHorizontalIcon } from '@primer/octicons-react';
 import { Table, DataTable } from '@primer/react/experimental';
+import {  ActionList, ActionMenu, IconButton, Label, Text } from '@primer/react';
+import { CalendarX, ClipboardList, Eraser, ListPlus, Menu, Eye, Paperclip, PenLine, Dot } from "lucide-react";
 import { google_sans, lora, mona_sans, noto_sans, noto_serif, roboto, roboto_flex, shantell_sans, suse } from "@/lib/font";
-
 import { getMyClassPelaksanaan } from "@/server/actions/my-class";
 
 export default function TableKelas({
   selectedDate,
-  onSelectDelete,
 }: {
   selectedDate?: string;
-  onSelectDelete?: (id: any, username: string, element: any) => void;
 }) {
   const router = useRouter();
   const rippleOptions = { color: "rgba(0, 0, 0, 0.2)" };
@@ -98,7 +97,7 @@ export default function TableKelas({
                 header: "Ruang",
                 field: "ruang",
                 align: "start",
-                width: "17%",
+                width: "15%",
                 renderCell: (row) => {
                   return (
                     <span className={`text-sm`}>{row.ruang}</span>
@@ -109,60 +108,53 @@ export default function TableKelas({
                 header: "Status",
                 field: "status",
                 align: "start",
-                width: "23%",
+                width: "20%",
                 renderCell: (row) => {
                   const status = row.status || 0;
                   console.log("status", status)
                   return (
-                    <Select
-                      labelInValue
-                      defaultValue={{ value: status }}
-                      style={{ width: "75%" }}
-                      onChange={() => {
-
-                      }}
-                      options={[
-                        {
-                          value: 0,
-                          label: 'Belum dikonfirmasi',
-                        },
-                        {
-                          value: 1,
-                          label: 'Offline',
-                        },
-                        {
-                          value: 2,
-                          label: 'Online',
-                        },
-                        {
-                          value: 3,
-                          label: 'Reschedule',
-                        },
-                        {
-                          value: 4,
-                          label: 'Kosong',
-                        },
-                        {
-                          value: 5,
-                          label: 'Batal',
-                        },
-                      ]}
-                    />
+                    status == 0 ? <Tag color="#707070" variant="outlined" className="rounded-full! font-medium">Belum dikonfirmasi</Tag>
+                    : status == 1 ? <Tag color="#00A550" variant="outlined" className="rounded-full! font-medium">Offline</Tag>
+                    : status == 2 ? <Tag color="#4D4DFF" variant="outlined" className="rounded-full! font-medium">Online</Tag>
+                    : status == 3 ? <Tag color="#bd752b" variant="outlined" className="rounded-full! font-medium">Reschedule</Tag>
+                    : status == 4 ? <Tag color="#ff4f00" variant="outlined" className="rounded-full! font-medium">Kosong</Tag>
+                    : <Tag color="#ff4f00" variant="outlined" className="rounded-full! font-medium">Batal</Tag>
                   )
                 }
               },
-              // {
-              //   header: "Aksi",
-              //   id: "id",
-              //   width: "15%",
-              //   renderCell: (row) => {
-              //     return (
-              //       <>
-
-              //       </>
-              //     )
-              //   },
-              // },
+              {
+                header: "Aksi",
+                id: "id",
+                width: "5%",
+                renderCell: (row) => {
+                  return (
+                    <>
+                      <ActionMenu>
+                        <ActionMenu.Anchor>
+                          <IconButton
+                            aria-label={`Lihat, edit, atau hapus agenda`}
+                            // title={`Lihat, edit, atau hapus agenda`}
+                            size="small"
+                            icon={KebabHorizontalIcon}
+                            variant="invisible"
+                            className="min-w-0 min-h-0 w-auto! h-auto! px-1! py-0.75!"
+                          />
+                        </ActionMenu.Anchor>
+                        <ActionMenu.Overlay className="min-w-fit!">
+                          <ActionList>
+                            <ActionList.Item className="" onClick={() => {
+                              router.push(`/my_class/${row.id}/edit`);
+                            }}>
+                              <span className={`font-medium! ${mona_sans.className}`}>Edit</span>
+                              <ActionList.TrailingVisual className="ml-5"><PenLine size={12} strokeWidth={2} /></ActionList.TrailingVisual>
+                            </ActionList.Item>
+                          </ActionList>
+                        </ActionMenu.Overlay>
+                      </ActionMenu>
+                    </>
+                  )
+                }
+              },
             ]}
           />
         </Table.Container>

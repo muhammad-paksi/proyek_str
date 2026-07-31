@@ -70,3 +70,70 @@ export async function getMyClassPelaksanaan(selectedDate?: string) {
     date: item.date,
   }));
 }
+
+export async function getPelaksanaanDetail(idPelaksanaan: number) {
+  const results = await db
+    .select({
+      id: pelaksanaan.id,
+      kodeRuang: pelaksanaan.ruang,
+      status: pelaksanaan.status,
+      mata_kuliah: mataKuliah.namaMk,
+      jamMulai: jamPelajaran.jamMulai,
+      jamSelesai: jamPelajaran.jamSelesai,
+      date: pelaksanaan.date,
+    })
+    .from(pelaksanaan)
+    .innerJoin(jadwal, eq(pelaksanaan.kodeJadwal, jadwal.idJadwal))
+    .leftJoin(mataKuliah, eq(jadwal.kodeMk, mataKuliah.kodeMk))
+    .leftJoin(jamPelajaran, eq(jadwal.kodeJp, jamPelajaran.kodeJp))
+    .where(eq(pelaksanaan.id, idPelaksanaan))
+    .limit(1);
+
+  if (results.length === 0) return null;
+  const item = results[0];
+  return {
+    id: item.id,
+    kodeRuang: item.kodeRuang ?? null,
+    status: Number(item.status) || 0,
+    mata_kuliah: item.mata_kuliah || "Tidak diketahui",
+    jam_pelajaran: item.jamMulai && item.jamSelesai
+      ? `${item.jamMulai.slice(0, 5)} - ${item.jamSelesai.slice(0, 5)}`
+      : "-",
+    date: item.date,
+  };
+}
+
+export async function getRuangList() {
+  const results = await db
+    .select({
+      kodeRuang: ruang.kodeRuang,
+      namaRuang: ruang.namaRuang,
+    })
+    .from(ruang);
+
+  return results.map((r) => ({
+    value: r.kodeRuang,
+    label: r.kodeRuang.replace(/_/g, " "),
+  }));
+}
+
+export async function updatePelaksanaan({
+  id: idPelaksanaan,
+  kodeRuang,
+  status,
+}: {
+  id: number;
+  kodeRuang?: string | null;
+  status?: number | null;
+}) {
+  const updates: Record<string, unknown> = {};
+  if (kodeRuang !== undefined && kodeRuang !== null) updates.ruang = kodeRuang;
+  if (status !== undefined && status !== null) updates.status = status;
+
+  if (Object.keys(updates).length === 0) return;
+
+  await db
+    .update(pelaksanaan)
+    .set(updates)
+    .where(eq(pelaksanaan.id, idPelaksanaan));
+}

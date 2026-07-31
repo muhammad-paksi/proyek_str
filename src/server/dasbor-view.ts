@@ -94,6 +94,7 @@ export const mulaiKelas = actionClient
     const values = jadwalRows.map(j => ({
       kodeJadwal: j.idJadwal,
       date: new Date(todayStr),
+      ruang: j.kodeRuang,
       status: 0 
     }));
 
