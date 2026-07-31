@@ -136,7 +136,11 @@ export default function Page() {
               >
                 <table className="w-full table-fixed border-collapse text-left text-sm text-slate-700">
                   <tbody className="divide-y divide-slate-100">
-                    {pelaksanaan.map((item, idx) => {
+                    {[...pelaksanaan].sort((a, b) => {
+                      const jamCmp = (a.jamMulai ?? "").localeCompare(b.jamMulai ?? "");
+                      if (jamCmp !== 0) return jamCmp;
+                      return (a.kelas ?? "").localeCompare(b.kelas ?? "");
+                    }).map((item, idx) => {
                       let status = item.status;
                       let badgeClass = "bg-slate-100 text-slate-600 border border-slate-200";
                       let statusText = "Belum dikonfirmasi";
