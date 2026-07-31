@@ -8,7 +8,7 @@ import Header from "@/components/header";
 import Tooltip from "@mui/material/Tooltip";
 import { Menu } from "lucide-react";
 import { Table } from "@heroui/react";
-import { Button, message } from 'antd'
+import { Button, message, Tag } from 'antd'
 import { lora, suse } from "@/lib/font";
 import { useRowHeights } from "@/lib/useRowHeight";
 import { getDasborData, mulaiKelas } from "@/server/dasbor-view";
@@ -120,10 +120,10 @@ export default function Page() {
                   <tr>
                     <th className="w-[7%] py-3 px-4">No.</th>
                     <th className="w-[15%] py-3 px-4">Kelas</th>
-                    <th className="w-[23%] py-3 px-4">Mata Kuliah</th>
-                    <th className="w-[20%] py-3 px-4">Jam</th>
+                    <th className="w-[20%] py-3 px-4">Mata Kuliah</th>
+                    <th className="w-[20%] py-3 px-4 text-left">Jam</th>
                     <th className="w-[15%] py-3 px-4">Ruang</th>
-                    <th className="w-[20%] py-3 px-4">Status</th>
+                    <th className="w-[23%] py-3 px-4">Status</th>
                   </tr>
                 </thead>
               </table>
@@ -132,19 +132,25 @@ export default function Page() {
               <div
                 // ref={scrollRef}
                 ref={tableRef}
-                className="h-90 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:bg-slate-300"
+                className="h-90 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:bg-slate-300"
               >
                 <table className="w-full table-fixed border-collapse text-left text-sm text-slate-700">
                   <tbody className="divide-y divide-slate-100">
-                    {pelaksanaan.map((item, idx) => {
-                      let statusText = "Belum dikonfirmasi";
+                    {[...pelaksanaan].sort((a, b) => {
+                      const jamCmp = (a.jamMulai ?? "").localeCompare(b.jamMulai ?? "");
+                      if (jamCmp !== 0) return jamCmp;
+                      return (a.kelas ?? "").localeCompare(b.kelas ?? "");
+                    }).map((item, idx) => {
+                      let status = item.status;
                       let badgeClass = "bg-slate-100 text-slate-600 border border-slate-200";
+                      let statusText = "Belum dikonfirmasi";
                       switch (Number(item.status)) {
-                        case 1: statusText = "Offline"; badgeClass = "bg-emerald-50 text-emerald-700 border border-emerald-200"; break;
-                        case 2: statusText = "Online"; badgeClass = "bg-blue-50 text-blue-700 border border-blue-200"; break;
-                        case 3: statusText = "Pindah"; badgeClass = "bg-amber-50 text-amber-700 border border-amber-200"; break;
-                        case 4: statusText = "Kosong"; badgeClass = "bg-rose-50 text-rose-700 border border-rose-200"; break;
-                        case 5: statusText = "Dibatalkan"; badgeClass = "bg-slate-100 text-slate-700 border border-slate-200"; break;
+                        case 0: statusText = "Belum dikonfirmasi"; badgeClass = "bg-[#707070]/25 text-[#707070] border-0 border-[#707070]"; break;
+                        case 1: statusText = "Offline"; badgeClass = "bg-[#00A550]/25 text-[#00A550] border-0 border-[#00A550]"; break;
+                        case 2: statusText = "Online"; badgeClass = "bg-[#4D4DFF]/25 text-[#4D4DFF] border-0 border-[#4D4DFF]"; break;
+                        case 3: statusText = "Pindah"; badgeClass = "bg-[#bd752b]/25 text-[#bd752b] border-0 border-[#bd752b]"; break;
+                        case 4: statusText = "Kosong"; badgeClass = "bg-[#ff4f00]/25 text-[#ff4f00] border-0 border-[#ff4f00]"; break;
+                        case 5: statusText = "Dibatalkan"; badgeClass = "bg-[#E53935]/25 text-[#E53935] border-0 border-[#E53935]"; break;
                       }
 
                       return (
@@ -155,17 +161,21 @@ export default function Page() {
                         >
                           <td className="w-[7%] py-3 px-4 font-semibold text-slate-900">{idx + 1}.</td>
                           <td className="w-[15%] py-3 px-4 font-medium text-slate-900">{item.kelas.replace(/_/g, " ")}</td>
-                          <td className="w-[23%] py-3 px-4">
+                          <td className="w-[20%] py-3 px-4">
                             <div className="truncate" title={item.mataKuliah}>{item.mataKuliah}</div>
                           </td>
                           <td className={`w-[20%] py-3 px-4 whitespace-nowrap text-slate-600 ${suse.className}`}>
                             {item.jamMulai?.slice(0, 5)} - {item.jamSelesai?.slice(0, 5)}
                           </td>
                           <td className="w-[15%] py-3 px-4 text-slate-600">{item.ruang || "-"}</td>
-                          <td className="w-[20%] py-3 px-4">
-                            <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${badgeClass}`}>
-                              {statusText}
-                            </span>
+                          <td className="w-[23%] py-3 px-4">
+                            {status == 0 ? <Tag color="#707070" variant="outlined" className="rounded-full! font-medium">Belum dikonfirmasi</Tag>
+                              : status == 1 ? <Tag color="#00A550" variant="outlined" className="rounded-full! font-medium">Offline</Tag>
+                                : status == 2 ? <Tag color="#4D4DFF" variant="outlined" className="rounded-full! font-medium">Online</Tag>
+                                  : status == 3 ? <Tag color="#bd752b" variant="outlined" className="rounded-full! font-medium">Reschedule</Tag>
+                                    : status == 4 ? <Tag color="#ff4f00" variant="outlined" className="rounded-full! font-medium">Kosong</Tag>
+                                      : <Tag color="#ff4f00" variant="outlined" className="rounded-full! font-medium">Dibatalkan</Tag>
+                            }
                           </td>
                         </tr>
                       )
@@ -195,30 +205,3 @@ export default function Page() {
     </>
   )
 }
-
- // Logic Auto-scroll Table
-  // useEffect(() => {
-  //   if (!scrollRef.current || pelaksanaan.length === 0) return;
-
-  //   let animationFrameId: number;
-  //   let scrollAmount = 0;
-  //   const speed = 2; // pixels per frame
-
-  //   const scroll = () => {
-  //     if (scrollRef.current) {
-  //       const { scrollHeight, clientHeight } = scrollRef.current;
-  //       if (scrollHeight > clientHeight) {
-  //         scrollAmount += speed;
-  //         if (scrollAmount >= scrollHeight - clientHeight) {
-  //           scrollAmount = 0;
-  //         }
-  //         scrollRef.current.scrollTop = scrollAmount;
-  //       }
-  //     }
-  //     animationFrameId = requestAnimationFrame(scroll);
-  //   };
-
-  //   animationFrameId = requestAnimationFrame(scroll);
-
-  //   return () => cancelAnimationFrame(animationFrameId);
-  // }, [pelaksanaan]);

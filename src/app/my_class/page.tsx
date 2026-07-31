@@ -61,10 +61,6 @@ export default function Page() {
 
         <TableKelas
           selectedDate={selectedDate}
-          onSelectDelete={(id, username, element) => {
-            setDeleteTarget({ id, username, triggerEl: element });
-            setIsDeleteOpen(true);
-          }}
         />
       </main>
       {isDeleteOpen && (

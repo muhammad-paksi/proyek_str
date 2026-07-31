@@ -3,7 +3,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const id = (await params).id; // Ambil ID dari URL
 
   return {
-    title: `Edit kelas - ${id} | SI Diseminasi`,
+    title: `Edit user - ${id} | SI Diseminasi`,
     description: ``
   };
 }

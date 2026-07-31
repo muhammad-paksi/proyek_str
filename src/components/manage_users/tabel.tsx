@@ -91,27 +91,7 @@ export default function TableUser({ onSelectDelete }: { onSelectDelete: (id: any
                   const role = row.role.toLowerCase();
                   return (
                     <>
-                      {/* <Label 
-                        className={`
-                          flex! items-center!
-                          pl-0.5! pr-2!
-                          border-3
-                          ${
-                            role === "staf" ? "border-[#1338be]!" 
-                            : role === "admin" ? "border-[#f2b949]!" 
-                            : undefined
-                          }
-                          ${suse.className}
-                        `}
-                      > */}
                       <div className={`flex! items-center! text-sm ${suse.className}`}>
-                        {/* <Dot size={14} strokeWidth={5} 
-                          color={`${
-                            role === "staf" ? "#1338be" 
-                            : role === "admin" ? "#f2b949" 
-                            : "black"
-                          }`}
-                        /> */}
                         <span className={` font-light!
                           ${
                             role === "staf" ? "text-[#1338be]" 
