@@ -97,7 +97,7 @@ export default function Page() {
               className="object-contain w-full h-full animate-[crossfade_0.6s_ease-in-out]"
             />
           ) : (
-            <div className={`text-gray-400 text-sm ${suse.className}`}>Tidak ada gambar agenda</div>
+            <div className={`text-gray-400 text-base ${suse.className}`}>Tidak ada poster agenda untuk ditampilkan</div>
           )}
         </div>
 
