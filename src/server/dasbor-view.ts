@@ -74,7 +74,8 @@ export const mulaiKelas = actionClient
     const todayStr = today.toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
     const dayNames = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const dayIndex = new Date(today.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })).getDay();
-    const todayName = dayNames[dayIndex];
+    // const todayName = dayNames[dayIndex];
+    const todayName = 2;
 
     const [hariRow] = await db.select().from(hari).where(eq(hari.namaHari, todayName)).limit(1);
     
