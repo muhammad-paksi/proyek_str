@@ -134,7 +134,7 @@ export default function Page() {
 
   const handleSave = useCallback(async () => {
     setIsSaving(true);
-    console.log("Lihat",selectedIds)
+    console.log("Lihat", selectedIds)
     try {
       await saveDasborAgenda({
         lantai: lantaiNum,
@@ -263,10 +263,10 @@ export default function Page() {
 
         {/* Split-view Panels */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-          {/* Panel Kiri: Agenda Terpilih */}
-          <div className="relative overflow-hidden rounded-2xl bg-linear-to-b from-white to-gray-50/50 border border-gray-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.04)] p-5 min-h-[55vh] max-h-[65vh] flex flex-col">
-            {/* Decorative top bar */}
+          {/* Panel Kiri */}
+          <div className="relative overflow-hidden rounded-2xl bg-linear-to-b from-white to-gray-50/50 border border-gray-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.04)] p-5 h-[65vh] min-h-0 flex flex-col">
             <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-t-2xl" />
+
             <SelectedAgendaList
               items={selectedAgendas}
               onRemove={handleRemove}
@@ -276,10 +276,10 @@ export default function Page() {
             />
           </div>
 
-          {/* Panel Kanan: Semua Agenda */}
-          <div className="relative overflow-hidden rounded-2xl bg-linear-to-b from-white to-gray-50/50 border border-gray-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.04)] p-5 min-h-[55vh] max-h-[65vh] flex flex-col">
-            {/* Decorative top bar */}
+          {/* Panel Kanan */}
+          <div className="relative overflow-hidden rounded-2xl bg-linear-to-b from-white to-gray-50/50 border border-gray-200/80 shadow-[0_1px_4px_rgba(0,0,0,0.04)] p-5 h-[65vh] min-h-0 flex flex-col">
             <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-400 via-indigo-400 to-violet-400 rounded-t-2xl" />
+
             <AgendaSelector
               items={availableAgendas}
               selectedIds={new Set(selectedIds)}
