@@ -1,13 +1,8 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import Header from "@/components/header";
-import Tooltip from "@mui/material/Tooltip";
-import { Menu } from "lucide-react";
-import { Table } from "@heroui/react";
 import { Button, message, Tag } from 'antd'
 import { lora, suse } from "@/lib/font";
 import { useRowHeights } from "@/lib/useRowHeight";
@@ -90,18 +85,19 @@ export default function Page() {
 
       <main className="w-full h-[92vh] grid grid-cols-7 pl-5 pr-5 ">
         {/* KIRI - SLIDESHOW AGENDA */}
-        <div className="col-span-3 pr-3 border-e border-e-gray-300 relative overflow-hidden flex items-center justify-center bg-gray-100">
+        <div className="col-span-3 pr-3 border-e border-e-gray-200 relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100">
           {loading ? (
-            <div className="text-gray-500">Memuat...</div>
+            <div className="text-gray-400">Memuat...</div>
           ) : images.length > 0 ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
+              key={currentImageIndex}
               src={images[currentImageIndex]}
               alt="Agenda"
-              className="object-contain w-full h-full"
+              className="object-contain w-full h-full animate-[crossfade_0.6s_ease-in-out]"
             />
           ) : (
-            <div className={`text-gray-500 text-sm ${suse.className}`}>Tidak ada gambar agenda</div>
+            <div className={`text-gray-400 text-sm ${suse.className}`}>Tidak ada gambar agenda</div>
           )}
         </div>
 
@@ -141,17 +137,7 @@ export default function Page() {
                       if (jamCmp !== 0) return jamCmp;
                       return (a.kelas ?? "").localeCompare(b.kelas ?? "");
                     }).map((item, idx) => {
-                      let status = item.status;
-                      let badgeClass = "bg-slate-100 text-slate-600 border border-slate-200";
-                      let statusText = "Belum dikonfirmasi";
-                      switch (Number(item.status)) {
-                        case 0: statusText = "Belum dikonfirmasi"; badgeClass = "bg-[#707070]/25 text-[#707070] border-0 border-[#707070]"; break;
-                        case 1: statusText = "Offline"; badgeClass = "bg-[#00A550]/25 text-[#00A550] border-0 border-[#00A550]"; break;
-                        case 2: statusText = "Online"; badgeClass = "bg-[#4D4DFF]/25 text-[#4D4DFF] border-0 border-[#4D4DFF]"; break;
-                        case 3: statusText = "Pindah"; badgeClass = "bg-[#bd752b]/25 text-[#bd752b] border-0 border-[#bd752b]"; break;
-                        case 4: statusText = "Kosong"; badgeClass = "bg-[#ff4f00]/25 text-[#ff4f00] border-0 border-[#ff4f00]"; break;
-                        case 5: statusText = "Dibatalkan"; badgeClass = "bg-[#E53935]/25 text-[#E53935] border-0 border-[#E53935]"; break;
-                      }
+                      const status = item.status;
 
                       return (
                         <tr 
