@@ -34,6 +34,10 @@ export default function Page() {
         waktu: data.waktu instanceof Date
           ? dayjs(data.waktu).format("DD MMMM YYYY")
           : dayjs(String(data.waktu)).format("DD MMMM YYYY"),
+        tempat: data.tempat ?? '-',
+        waktuMulai: data.waktuMulai ?? '-',
+        waktuSelesai: data.waktuSelesai ?? '-',
+        lantai: data.lantai ? `${data.lantai}` : '-',
         imageList: data.imageList,
         deskripsi: data.deskripsi ?? undefined,
       };
@@ -67,6 +71,42 @@ export default function Page() {
             {/* NO. 2 */}
             <Timeline.Item>
               <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>2</Timeline.Badge>
+              <Timeline.Body>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div>
+                    <Text className={`text-black font-medium`}>Tanggal</Text>
+                    <p className={`text-base font-normal ${mona_sans.className}`}>{agendaDetail?.waktu || ""}</p>
+                  </div>
+                  <div>
+                    <Text className={`text-black font-medium`}>Waktu</Text>
+                    <p className={`text-base font-normal ${mona_sans.className}`}>
+                      {agendaDetail?.waktuMulai || "-"} s.d. {agendaDetail?.waktuSelesai || "-"}
+                    </p>
+                  </div>
+                </div>
+              </Timeline.Body>
+            </Timeline.Item>
+
+            {/* NO. 3 */}
+            <Timeline.Item>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>3</Timeline.Badge>
+              <Timeline.Body>
+                <div className="flex flex-col md:flex-row gap-6">
+                  <div>
+                    <Text className={`text-black font-medium`}>Tempat</Text>
+                    <p className={`text-base font-normal ${mona_sans.className}`}>{agendaDetail?.tempat || "-"}</p>
+                  </div>
+                  <div>
+                    <Text className={`text-black font-medium`}>Lantai</Text>
+                    <p className={`text-base font-normal ${mona_sans.className}`}>{agendaDetail?.lantai || "-"}</p>
+                  </div>
+                </div>
+              </Timeline.Body>
+            </Timeline.Item>
+
+            {/* NO. 4 */}
+            <Timeline.Item>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>4</Timeline.Badge>
               <Timeline.Body className="border-0">
                 <FormControl aria-label="project-name-field" className="flex-none border-0 border-red-500">
                   <FormControl.Label
@@ -91,9 +131,9 @@ export default function Page() {
               </Timeline.Body>
             </Timeline.Item>
 
-            {/* NO. 3 */}
+            {/* NO. 5 */}
             <Timeline.Item>
-              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>3</Timeline.Badge>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>5</Timeline.Badge>
               <Timeline.Body>
                 <FormControl aria-label="project-desc-field" className="flex-none">
                   <FormControl.Label className="mb-1">

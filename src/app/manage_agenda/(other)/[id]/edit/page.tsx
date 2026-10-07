@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react";
-import { DatePicker } from "antd";
+import { DatePicker, TimePicker } from "antd";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, FormControl, Text, TextInput, Timeline } from '@primer/react';
+import { Button, FormControl, Text, TextInput, Timeline, Select } from '@primer/react';
 import { lora } from "@/lib/font";
 import UploadEditGallery from "@/components/manage_agenda/upload-edit-gallery";
 import { getAgendaDetail, updateAgenda, uploadAgendaFiles } from "@/server/agenda";
@@ -20,6 +20,10 @@ export default function Page() {
   const queryClient = useQueryClient();
 
   const [nameInput, setNameInput] = useState<string>('');
+  const [tempatInput, setTempatInput] = useState<string>('');
+  const [waktuMulaiInput, setWaktuMulaiInput] = useState<string | null>(null);
+  const [waktuSelesaiInput, setWaktuSelesaiInput] = useState<string | null>(null);
+  const [lantaiInput, setLantaiInput] = useState<string>('');
   const [dateInput, setDateInput] = useState<string | null>(null);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
@@ -44,6 +48,10 @@ export default function Page() {
           ? dayjs(data.waktu).format("YYYY-MM-DD")
           : String(data.waktu)
         );
+        setTempatInput(data.tempat ?? '');
+        setWaktuMulaiInput(data.waktuMulai ?? null);
+        setWaktuSelesaiInput(data.waktuSelesai ?? null);
+        setLantaiInput(data.lantai ? String(data.lantai) : '');
         setInitialized(true);
       }
 
@@ -67,6 +75,10 @@ export default function Page() {
         id: Number(id),
         nama: nameInput.trim(),
         waktu: dateInput,
+        tempat: tempatInput.trim() || undefined,
+        waktuMulai: waktuMulaiInput || undefined,
+        waktuSelesai: waktuSelesaiInput || undefined,
+        lantai: lantaiInput ? Number(lantaiInput) : undefined,
         deletedFileIds: deletedImageIds,
       });
 
@@ -134,8 +146,43 @@ export default function Page() {
             {/* NO. 2 */}
             <Timeline.Item>
               <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>2</Timeline.Badge>
+              <Timeline.Body>
+                <div className="flex gap-4 w-full">
+                  <FormControl aria-label="tempat-field" className="flex-1">
+                    <FormControl.Label>
+                      Tempat
+                    </FormControl.Label>
+                    <TextInput
+                      className={`w-full`}
+                      value={tempatInput}
+                      onChange={(e) => setTempatInput(e.target.value)}
+                    />
+                  </FormControl>
+
+                  <FormControl aria-label="lantai-field" className="w-30">
+                    <FormControl.Label>
+                      Lantai
+                    </FormControl.Label>
+                    <Select
+                      className="w-full"
+                      value={lantaiInput}
+                      onChange={(e) => setLantaiInput(e.target.value)}
+                    >
+                      <Select.Option value="">-</Select.Option>
+                      <Select.Option value="6">Lantai 6</Select.Option>
+                      <Select.Option value="7">Lantai 7</Select.Option>
+                      <Select.Option value="8">Lantai 8</Select.Option>
+                    </Select>
+                  </FormControl>
+                </div>
+              </Timeline.Body>
+            </Timeline.Item>
+
+            {/* NO. 3 */}
+            <Timeline.Item>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>3</Timeline.Badge>
               <Timeline.Body className="border-0">
-                <FormControl aria-label="project-name-field" className="flex-none border-0 border-red-500">
+                <FormControl aria-label="project-date-field" className="flex-none border-0 border-red-500">
                   <FormControl.Label
                     required
                     requiredText=""
@@ -157,9 +204,37 @@ export default function Page() {
               </Timeline.Body>
             </Timeline.Item>
 
-            {/* NO. 3 */}
+            {/* NO. 4 */}
             <Timeline.Item>
-              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>3</Timeline.Badge>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>4</Timeline.Badge>
+              <Timeline.Body>
+                <div className="flex gap-4">
+                  <FormControl aria-label="waktu-mulai-field" className="flex-1">
+                    <FormControl.Label>Waktu Mulai</FormControl.Label>
+                    <TimePicker 
+                      format="HH:mm" 
+                      value={waktuMulaiInput ? dayjs(waktuMulaiInput, "HH:mm") : undefined}
+                      className="w-full"
+                      onChange={(time: Dayjs | null) => setWaktuMulaiInput(time ? time.format("HH:mm") : null)} 
+                    />
+                  </FormControl>
+
+                  <FormControl aria-label="waktu-selesai-field" className="flex-1">
+                    <FormControl.Label>Waktu Selesai</FormControl.Label>
+                    <TimePicker 
+                      format="HH:mm" 
+                      value={waktuSelesaiInput ? dayjs(waktuSelesaiInput, "HH:mm") : undefined}
+                      className="w-full"
+                      onChange={(time: Dayjs | null) => setWaktuSelesaiInput(time ? time.format("HH:mm") : null)} 
+                    />
+                  </FormControl>
+                </div>
+              </Timeline.Body>
+            </Timeline.Item>
+
+            {/* NO. 5 */}
+            <Timeline.Item>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>5</Timeline.Badge>
               <Timeline.Body>
                 <FormControl aria-label="project-desc-field" className="flex-none">
                   <FormControl.Label>
@@ -191,9 +266,9 @@ export default function Page() {
               </Timeline.Body>
             </Timeline.Item>
 
-            {/* NO. 4 */}
+            {/* NO. 6 */}
             <Timeline.Item className="flex items-end">
-              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>4</Timeline.Badge>
+              <Timeline.Badge className={`text-sm font-normal ${lora.className}`}>6</Timeline.Badge>
               <Timeline.Body>
                 <Button 
                   variant="primary" 

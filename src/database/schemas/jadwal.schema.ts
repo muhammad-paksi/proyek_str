@@ -15,6 +15,7 @@ import {
   text,
   boolean,
   json,
+  integer,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -85,27 +86,18 @@ export const agenda = pgTable(
   {
     id: bigserial("id", { mode: "number" }).notNull(),
     nama: varchar({ length: 100 }),
-    deskripsi: varchar({ length: 500 }),
+    tempat: varchar({ length: 255}),
+    lantai: integer(),
+    deskripsi: text(),
     waktu: date("waktu", { mode: "date" }).notNull(),
+    waktuMulai: time("waktu_mulai"),
+    waktuSelesai: time("waktu_selesai"),
     created_at: timestamp("created_at", { mode: "date" }).default(sql`now()`),
     updated_at: timestamp("updated_at", { mode: "date" }).$onUpdateFn(() => sql`now()`),
   },
   (table) => [
     primaryKey({ columns: [table.id], name: "agenda_id_agenda" }),
   ],
-);
-
-export const dasbor_agenda = pgTable(
-  "dasbor_agenda",
-  {
-    id_agenda: bigserial("id", { mode: "number" }).notNull()
-      .references(() => agenda.id, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      }),
-    lantai: numeric("lantai", { mode: "number" }).notNull(),
-    urutan: numeric("urutan", { mode: "number" }).notNull(),
-  }
 );
 
 export const fileAgenda = pgTable(
@@ -123,6 +115,19 @@ export const fileAgenda = pgTable(
   (table) => [
     primaryKey({ columns: [table.id], name: "file_agenda_id_file_agenda" }),
   ],
+);
+
+export const dasbor_agenda = pgTable(
+  "dasbor_agenda",
+  {
+    id_agenda: bigserial("id", { mode: "number" }).notNull()
+      .references(() => agenda.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    lantai: numeric("lantai", { mode: "number" }).notNull(),
+    urutan: numeric("urutan", { mode: "number" }).notNull(),
+  }
 );
 
 export const jadwal = pgTable(

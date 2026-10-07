@@ -50,6 +50,10 @@ export const getAgendaDetail = actionClient
     return {
       ...row,
       imageList: files,
+      tempat: row.tempat,
+      waktuMulai: row.waktuMulai,
+      waktuSelesai: row.waktuSelesai,
+      lantai: row.lantai,
     };
   });
 
@@ -58,6 +62,10 @@ const createSchema = v.object({
   nama: v.pipe(v.string(), v.minLength(1, "Nama wajib diisi")),
   waktu: v.string(), // ISO date string "YYYY-MM-DD"
   deskripsi: v.optional(v.string()),
+  tempat: v.optional(v.string()),
+  waktuMulai: v.optional(v.string()),
+  waktuSelesai: v.optional(v.string()),
+  lantai: v.optional(v.number()),
 });
 
 export const createAgenda = actionClient
@@ -69,6 +77,10 @@ export const createAgenda = actionClient
         nama: parsedInput.nama,
         waktu: new Date(parsedInput.waktu),
         deskripsi: parsedInput.deskripsi || null,
+        tempat: parsedInput.tempat || null,
+        waktuMulai: parsedInput.waktuMulai || null,
+        waktuSelesai: parsedInput.waktuSelesai || null,
+        lantai: parsedInput.lantai || null,
       })
       .returning({ id: agenda.id });
 
@@ -110,6 +122,10 @@ const updateSchema = v.object({
   nama: v.optional(v.string()),
   waktu: v.optional(v.string()),
   deskripsi: v.optional(v.string()),
+  tempat: v.optional(v.string()),
+  waktuMulai: v.optional(v.string()),
+  waktuSelesai: v.optional(v.string()),
+  lantai: v.optional(v.number()),
   deletedFileIds: v.optional(v.array(v.number())),
 });
 
@@ -121,6 +137,10 @@ export const updateAgenda = actionClient
     if (parsedInput.nama !== undefined) updates.nama = parsedInput.nama;
     if (parsedInput.waktu !== undefined) updates.waktu = new Date(parsedInput.waktu);
     if (parsedInput.deskripsi !== undefined) updates.deskripsi = parsedInput.deskripsi || null;
+    if (parsedInput.tempat !== undefined) updates.tempat = parsedInput.tempat || null;
+    if (parsedInput.waktuMulai !== undefined) updates.waktuMulai = parsedInput.waktuMulai || null;
+    if (parsedInput.waktuSelesai !== undefined) updates.waktuSelesai = parsedInput.waktuSelesai || null;
+    if (parsedInput.lantai !== undefined) updates.lantai = parsedInput.lantai || null;
 
     if (Object.keys(updates).length > 0) {
       await db

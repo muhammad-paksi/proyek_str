@@ -113,6 +113,13 @@
       "when": 1785449825183,
       "tag": "0015_equal_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1791346955508,
+      "tag": "0016_skinny_archangel",
+      "breakpoints": true
     }
   ]
 }

@@ -38,7 +38,7 @@ export async function proxy(request: NextRequest) {
 
   const isPublic =
     pathname.startsWith('/akun/') ||
-    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/api/') ||
     pathname.startsWith('/_next/') ||
     pathname === '/' ||
     pathname.includes('.') ||
@@ -50,7 +50,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // RBAC Authorization Check for authenticated users
-  if (payload) {
+  if (payload && !pathname.startsWith('/api/')) {
     const role = payload.role as string;
 
     if (role !== 'super_admin') {

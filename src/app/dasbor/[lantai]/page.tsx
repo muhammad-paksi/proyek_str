@@ -85,7 +85,7 @@ export default function Page() {
 
       <main className="w-full h-[92vh] grid grid-cols-7 pl-5 pr-5 ">
         {/* KIRI - SLIDESHOW AGENDA */}
-        <div className="col-span-3 pr-3 border-e border-e-gray-200 relative overflow-hidden flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100">
+        <div className="col-span-3 pr-3 border-e border-e-gray-200 relative overflow-hidden flex items-center justify-center bg-linear-to-br from-slate-50 to-gray-100">
           {loading ? (
             <div className="text-gray-400">Memuat...</div>
           ) : images.length > 0 ? (
