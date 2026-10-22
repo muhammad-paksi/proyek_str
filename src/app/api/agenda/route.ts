@@ -7,6 +7,7 @@ export async function GET() {
   try {
     const res = await db
       .select({
+        id: agenda.id,
         tempat: agenda.tempat,
         waktuMulai: agenda.waktuMulai,
         waktuSelesai: agenda.waktuSelesai,
@@ -19,6 +20,7 @@ export async function GET() {
       .where(sql`DATE(${agenda.waktu}) = CURRENT_DATE`)
       .leftJoin(fileAgenda, eq(agenda.id, fileAgenda.idAgenda))
       .groupBy(
+        agenda.id,
         agenda.tempat,
         agenda.waktuMulai,
         agenda.waktuSelesai,
