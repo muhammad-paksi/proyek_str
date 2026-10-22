@@ -35,6 +35,7 @@ export async function proxy(request: NextRequest) {
   // Check if route is public
   const isDasborManage = pathname.startsWith('/dasbor/manage');
   const isDasborPublic = pathname.startsWith('/dasbor') && !isDasborManage;
+  const isAgendaView = /^\/manage_agenda\/[^/]+\/view$/.test(pathname);
 
   const isPublic =
     pathname.startsWith('/akun/') ||
@@ -42,7 +43,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/_next/') ||
     pathname === '/' ||
     pathname.includes('.') ||
-    isDasborPublic;
+    isDasborPublic ||
+    isAgendaView;
 
   // Unauthenticated users accessing protected routes -> redirect to /akun/masuk
   if (!payload && !isPublic) {
@@ -50,7 +52,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // RBAC Authorization Check for authenticated users
-  if (payload && !pathname.startsWith('/api/')) {
+  if (payload && !pathname.startsWith('/api/') && !isAgendaView) {
     const role = payload.role as string;
 
     if (role !== 'super_admin') {
